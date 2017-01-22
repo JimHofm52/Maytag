@@ -8,6 +8,7 @@ import org.strongback.components.ui.FlightStick;
 import org.strongback.hardware.Hardware;
 import org.teamresistance.frc.command.grabber.AlignGear;
 import org.teamresistance.frc.command.grabber.FindGear;
+import org.teamresistance.frc.command.FaceGoalCommand;
 import org.teamresistance.frc.command.grabber.GearExtend;
 import org.teamresistance.frc.command.grabber.GearRetract;
 import org.teamresistance.frc.command.grabber.GrabGear;
@@ -15,6 +16,8 @@ import org.teamresistance.frc.command.grabber.ReleaseGear;
 import org.teamresistance.frc.command.grabber.RotateDown;
 import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.hid.DaveKnob;
+import org.teamresistance.frc.sensor.goal.GoalSensor;
+import org.teamresistance.frc.command.StrafeCommand;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
@@ -64,6 +67,8 @@ public class Robot extends IterativeRobot {
 
   private final Climber climber = new Climber(IO.climberMotor, IO.powerPanel, IO.PDP.CLIMBER);
 
+  private final GoalSensor goalSensor = new GoalSensor();
+
   @Override
   public void robotInit() {
     Strongback.configure().recordNoEvents().recordNoData();
@@ -90,6 +95,9 @@ public class Robot extends IterativeRobot {
     grabberTesting.enableIndividualCommandsTest();
     grabberTesting.enableClimbRopeTest();
 
+    // Face the vision target while button 8 is held
+    reactor.onTriggeredSubmit(leftJoystick.getButton(8), () -> new FaceGoalCommand(drive));
+    reactor.onUntriggeredSubmit(leftJoystick.getButton(8), () -> Command.cancel(drive));
   }
 
   @Override
