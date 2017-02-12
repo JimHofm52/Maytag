@@ -16,7 +16,8 @@ import org.teamresistance.frc.command.grabber.ReleaseGear;
 import org.teamresistance.frc.command.grabber.RotateDown;
 import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.hid.DaveKnob;
-import org.teamresistance.frc.sensor.goal.GoalSensor;
+import org.teamresistance.frc.sensor.boiler.BoilerListener;
+import org.teamresistance.frc.sensor.boiler.BoilerPipeline;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
@@ -28,10 +29,13 @@ import org.teamresistance.frc.subsystem.climb.Climber;
 import org.teamresistance.frc.subsystem.grabber.Grabber;
 import org.teamresistance.frc.subsystem.snorfler.Snorfler;
 
+import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.VisionThread;
 
 /**
  * Main robot class. Override methods from {@link IterativeRobot} to define behavior.
@@ -66,7 +70,13 @@ public class Robot extends IterativeRobot {
 
   private final Climber climber = new Climber(IO.climberMotor, IO.powerPanel, IO.PDP.CLIMBER);
 
-  private final GoalSensor goalSensor = new GoalSensor();
+  // Vision
+  private static final String AXIS_CAMERA_IP = "";
+  private final VideoSource source = CameraServer.getInstance().addAxisCamera(AXIS_CAMERA_IP);
+  private final BoilerPipeline boilerPipeline = new BoilerPipeline();
+  private final BoilerListener boilerListener = new BoilerListener();
+  private final VisionThread visionThread = new VisionThread(source, boilerPipeline,
+      boilerListener);
 
   @Override
   public void robotInit() {
@@ -110,6 +120,7 @@ public class Robot extends IterativeRobot {
     IO.compressor.setClosedLoopControl(true);
     SmartDashboard.putNumber("Agitator Power",0.35);
     SmartDashboard.putNumber("Shooter Power", 0.80);
+    visionThread.start(); // Vision
   }
 
   @Override
@@ -119,8 +130,9 @@ public class Robot extends IterativeRobot {
     SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
     SmartDashboard.putData("PDP", IO.powerPanel);
 
-    Feedback feedback = new Feedback(IO.navX.getAngle());
+    Feedback feedback = new Feedback(IO.gyro.getAngle(), boilerListener.getRelativeOffset());
     SmartDashboard.putNumber("Gyro", feedback.currentAngle);
+    SmartDashboard.putNumber("Goal Offset", feedback.goalOffset.orElse(-1));
 
     drive.onUpdate(feedback);
 
