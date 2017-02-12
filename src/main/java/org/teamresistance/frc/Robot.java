@@ -17,7 +17,6 @@ import org.teamresistance.frc.command.grabber.RotateDown;
 import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.hid.DaveKnob;
 import org.teamresistance.frc.sensor.goal.GoalSensor;
-import org.teamresistance.frc.command.StrafeCommand;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
