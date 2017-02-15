@@ -1,5 +1,6 @@
 package org.teamresistance.frc;
 
+import edu.wpi.first.wpilibj.Relay;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.ui.FlightStick;
@@ -142,6 +143,8 @@ public class Robot extends IterativeRobot {
 
     Feedback feedback = new Feedback(orientation);
     drive.onUpdate(feedback);
+    IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kOn : Relay.Value.kOff);
+
   }
 
   @Override

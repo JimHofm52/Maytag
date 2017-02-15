@@ -1,5 +1,6 @@
 package org.teamresistance.frc;
 
+import edu.wpi.first.wpilibj.Relay;
 import org.strongback.components.Motor;
 import org.strongback.components.PowerPanel;
 import org.strongback.components.TalonSRX;
@@ -33,9 +34,6 @@ public class IO {
     private static final int BALL_SNORFLER = 7;
     private static final int GRABULATOR_ROTATOR = 8;
     private static final int CLIMBER = 9;
-
-    // Compressor assignment
-    private static final int AIR_COMPRESSOR = 2;
   }
 
   private static final class DIO {
@@ -50,6 +48,10 @@ public class IO {
 
   private static final class CAN {
     private static final int SHOOTER_WHEEL = 1; // TODO: verify
+  }
+
+  private static final class RELAY {
+    private static final int COMPRESSOR_RELAY = 0;
   }
 
   public static final class PDP {
@@ -80,6 +82,7 @@ public class IO {
 
   // Compressor
   public static final Compressor compressor = new Compressor();
+  public static final Relay compressorRelay = new Relay(RELAY.COMPRESSOR_RELAY);
 
   // TODO all the rest -- solenoids, dio
 }
