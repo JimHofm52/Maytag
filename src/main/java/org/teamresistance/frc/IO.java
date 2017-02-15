@@ -37,9 +37,9 @@ public class IO {
   }
 
   private static final class DIO {
-    private static final int GRABULATOR_RETRACTED_LIMIT = -1; // TODO
-    private static final int GRABULATOR_TOOTH_BANNER = -1; // TODO
-    private static final int GRABULATOR_SHOE_BANNER = -1; // TODO
+    private static final int GRABULATOR_RETRACTED_LIMIT = 0; // TODO
+    private static final int GRABULATOR_TOOTH_BANNER = 1; // TODO
+    private static final int GRABULATOR_SHOE_BANNER = 2; // TODO
   }
 
   private static final class PCM {
