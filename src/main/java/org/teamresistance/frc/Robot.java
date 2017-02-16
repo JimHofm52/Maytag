@@ -6,6 +6,7 @@ import org.strongback.SwitchReactor;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.drive.MecanumDrive;
 import org.strongback.hardware.Hardware;
+import org.teamresistance.frc.command.grabber.*;
 import org.teamresistance.frc.subsystem.climb.Climber;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.subsystem.snorfler.Snorfler;
@@ -110,6 +111,8 @@ public class Robot extends IterativeRobot {
     //reactor.onTriggeredSubmit(rightJoystick.getButton(3), () -> climber.climbRope(40,0.5));
     //reactor.onUntriggeredSubmit(rightJoystick.getButton(3), () -> Command.cancel(climber));
 
+
+
     reactor.onTriggered(leftJoystick.getButton(8), () -> {
       int port = (int) SmartDashboard.getNumber("PWM Victor", -1);
       if (port != -1) {
@@ -123,6 +126,24 @@ public class Robot extends IterativeRobot {
         Hardware.Motors.victorSP(port).stop();
       }
     });
+
+    reactor.onTriggeredSubmit(coJoystick.getButton(6),
+        () -> new GearExtend(1.0, IO.extendSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(7),
+        () -> new GearRetract(IO.extendSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(8),
+        () -> new RotateUp(1.0, IO.extendSolenoid, IO.rotateSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(9),
+        () -> new RotateDown(1.0, IO.extendSolenoid, IO.rotateSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(10),
+        () -> new GrabGear(1.0, IO.gripSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(11),
+        () -> new ReleaseGear(1.0, IO.gripSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(4),
+        () -> new FindGear(IO.gearFindBanner));
+    reactor.onTriggeredSubmit(coJoystick.getButton(5),
+        () -> new AlignGear(IO.gearRotatorMotor, IO.gearAlignBanner));
+
   }
 
   @Override

@@ -104,6 +104,4 @@ public class IO {
   public static final Compressor compressor = new Compressor();
   public static final Relay compressorRelay = new Relay(RELAY.COMPRESSOR_RELAY);
 
-
-  // TODO all the rest -- solenoids, dio
 }
