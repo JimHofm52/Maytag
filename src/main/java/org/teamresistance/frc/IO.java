@@ -37,13 +37,15 @@ public class IO {
   }
 
   private static final class DIO {
-    private static final int GRABULATOR_RETRACTED_LIMIT = 0; // TODO
-    private static final int GRABULATOR_TOOTH_BANNER = 1; // TODO
-    private static final int GRABULATOR_SHOE_BANNER = 2; // TODO
+    private static final int GRABULATOR_RETRACTED_LIMIT = 0;
+    private static final int GEAR_ALIGN_BANNER = 1;
+    private static final int GEAR_FIND_BANNER = 2;
   }
 
   private static final class PCM {
-    // TODO: solenoids are assigned to the PCM, right?
+    private static final int GEAR_EXTEND_SOLENOID = 0;
+    private static final int GEAR_ROTATE_SOLENOID = 1;
+    private static final int GEAR_GRIP_SOLENOID = 2;
   }
 
   private static final class CAN {
@@ -80,9 +82,28 @@ public class IO {
   public static final Motor gearRotatorMotor = victorSP(PWM.GRABULATOR_ROTATOR);
   public static final Motor climberMotor = victorSP(PWM.CLIMBER);
 
+  // Banner Sensors (for Grabulator)
+  public static final InvertibleDigitalInput gearFindBanner =
+      new InvertibleDigitalInput(DIO.GEAR_FIND_BANNER, false);
+  public static final InvertibleDigitalInput gearAlignBanner =
+      new InvertibleDigitalInput(DIO.GEAR_ALIGN_BANNER, false);
+
+  // Gear Limit Switch (check retracted)
+  private static final InvertibleDigitalInput gearRetractedLimit =
+      new InvertibleDigitalInput(DIO.GRABULATOR_RETRACTED_LIMIT, false);
+
+  // Pneumatic Cylinders (controlled via Solenoids)
+  public static final InvertibleSolenoid gripSolenoid =
+      new InvertibleSolenoid(PCM.GEAR_GRIP_SOLENOID, false);
+  public static final InvertibleSolenoidWithPosition extendSolenoid =
+      new InvertibleSolenoidWithPosition(PCM.GEAR_EXTEND_SOLENOID, false, gearRetractedLimit);
+  public static final InvertibleSolenoid rotateSolenoid =
+      new InvertibleSolenoid(PCM.GEAR_ROTATE_SOLENOID, false);
+
   // Compressor
   public static final Compressor compressor = new Compressor();
   public static final Relay compressorRelay = new Relay(RELAY.COMPRESSOR_RELAY);
+
 
   // TODO all the rest -- solenoids, dio
 }
