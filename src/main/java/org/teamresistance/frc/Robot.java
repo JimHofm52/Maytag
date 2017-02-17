@@ -4,12 +4,14 @@ import org.strongback.Strongback;
 import org.strongback.components.AngleSensor;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.hardware.Hardware;
+import org.teamresistance.frc.command.grabber.*;
 import org.teamresistance.frc.hid.DaveKnob;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
 
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -56,6 +58,23 @@ public class Robot extends IterativeRobot {
     snorflerTesting.enableSnorflerTest();
     snorflerTesting.enableFeedingShootingTest();
     climberTesting.enableClimberTest();
+
+    reactor.onTriggeredSubmit(coJoystick.getButton(6),
+        () -> new GearExtend(1.0, IO.extendSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(7),
+        () -> new GearRetract(IO.extendSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(8),
+        () -> new RotateUp(1.0, IO.extendSolenoid, IO.rotateSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(9),
+        () -> new RotateDown(1.0, IO.extendSolenoid, IO.rotateSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(10),
+        () -> new GrabGear(1.0, IO.gripSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(11),
+        () -> new ReleaseGear(1.0, IO.gripSolenoid));
+    reactor.onTriggeredSubmit(coJoystick.getButton(4),
+        () -> new FindGear(IO.gearFindBanner));
+    reactor.onTriggeredSubmit(coJoystick.getButton(5),
+        () -> new AlignGear(IO.gearRotatorMotor, IO.gearAlignBanner));
   }
 
   @Override
@@ -66,6 +85,7 @@ public class Robot extends IterativeRobot {
   @Override
   public void teleopInit() {
     Strongback.start();
+    IO.compressor.setClosedLoopControl(true);
   }
 
   @Override
@@ -78,6 +98,12 @@ public class Robot extends IterativeRobot {
     SmartDashboard.putNumber("Gyro", feedback.currentAngle);
 
     drive.onUpdate(feedback);
+
+    IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
+    SmartDashboard.putBoolean("Compressor Enabled?", IO.compressor.enabled());
+    SmartDashboard.putBoolean("Is Retracted?", IO.gearRetractedLimit.get());
+    SmartDashboard.putBoolean("Is Gear Present (Banner)", IO.gearFindBanner.get());
+    SmartDashboard.putBoolean("Is Gear Aligned (Banner)", IO.gearAlignBanner.get());
   }
 
   @Override
