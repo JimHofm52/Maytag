@@ -18,6 +18,11 @@ import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
+import org.teamresistance.frc.command.grabber.*;
+import org.teamresistance.frc.subsystem.climb.Climber;
+//import org.teamresistance.frc.subsystem.drive.Drive;
+import org.teamresistance.frc.subsystem.grabber.Grabber;
+import org.teamresistance.frc.subsystem.snorfler.Snorfler;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
@@ -46,6 +51,15 @@ public class Robot extends IterativeRobot {
       new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
       IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), rightJoystick.getRoll());
 
+  private final Grabber grabber = new Grabber(
+      IO.gripSolenoid,
+      IO.extendSolenoid,
+      IO.rotateSolenoid,
+      IO.gearRotatorMotor,
+      IO.gearFindBanner,
+      IO.gearAlignBanner
+  );
+
   @Override
   public void robotInit() {
     Strongback.configure().recordNoEvents().recordNoData();
@@ -68,6 +82,10 @@ public class Robot extends IterativeRobot {
 
     // Gear commands
     SwitchReactor reactor = Strongback.switchReactor();
+    reactor.onTriggeredSubmit(coJoystick.getButton(4),
+        () -> new FindGear(IO.gearFindBanner));
+    reactor.onTriggeredSubmit(coJoystick.getButton(5),
+        () -> new AlignGear(IO.gearRotatorMotor, IO.gearAlignBanner));
     reactor.onTriggeredSubmit(coJoystick.getButton(6),
         () -> new GearExtend(1.0, IO.extendSolenoid));
     reactor.onTriggeredSubmit(coJoystick.getButton(7),
@@ -80,10 +98,10 @@ public class Robot extends IterativeRobot {
         () -> new GrabGear(1.0, IO.gripSolenoid));
     reactor.onTriggeredSubmit(coJoystick.getButton(11),
         () -> new ReleaseGear(1.0, IO.gripSolenoid));
-    reactor.onTriggeredSubmit(coJoystick.getButton(4),
-        () -> new FindGear(IO.gearFindBanner));
-    reactor.onTriggeredSubmit(coJoystick.getButton(5),
-        () -> new AlignGear(IO.gearRotatorMotor, IO.gearAlignBanner));
+
+    reactor.onTriggeredSubmit(coJoystick.getButton(2), () -> grabber.pickupGear());
+    reactor.onTriggeredSubmit(coJoystick.getButton(3), () -> grabber.deliverGear());
+
   }
 
   @Override

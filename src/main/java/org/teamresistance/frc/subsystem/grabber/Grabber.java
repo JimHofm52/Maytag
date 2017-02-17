@@ -36,21 +36,40 @@ public class Grabber implements Requirable {
     this.gearAlignBannerSensor = gearAlignBannerSensor;
   }
 
-  public static boolean interrupted = false;
+//  public static boolean interrupted = false;
 
-  public CommandGroup lookForGear() {
+//  public CommandGroup lookForGear() {
+//    return CommandGroup.runSequentially(
+//        new GearRetract(extendSolenoid),
+//        CommandGroup.runSimultaneously(
+//            new RotateDown(1.0, extendSolenoid, rotateSolenoid),
+//            new ReleaseGear(1.0, gripSolenoid)
+//        ),
+//        new FindGear(gearPresentBannerSensor)
+//    );
+//  }
+//
+//  public CommandGroup pickupGear() {
+//    return CommandGroup.runSequentially(
+//        new GearExtend(1.0, extendSolenoid),
+//        new GrabGear(1.0, gripSolenoid),
+//        new GearRetract(extendSolenoid),
+//        CommandGroup.runSimultaneously (
+//            new RotateUp(1.0, extendSolenoid, rotateSolenoid),
+//            new AlignGear(rotateGearMotor, gearAlignBannerSensor)
+//        )
+//    );
+//  }
+
+
+  public CommandGroup pickupGear() {
     return CommandGroup.runSequentially(
         new GearRetract(extendSolenoid),
         CommandGroup.runSimultaneously(
             new RotateDown(1.0, extendSolenoid, rotateSolenoid),
             new ReleaseGear(1.0, gripSolenoid)
         ),
-        new FindGear(gearPresentBannerSensor)
-    );
-  }
-
-  public CommandGroup pickupGear() {
-    return CommandGroup.runSequentially(
+        new FindGear(gearPresentBannerSensor),
         new GearExtend(1.0, extendSolenoid),
         new GrabGear(1.0, gripSolenoid),
         new GearRetract(extendSolenoid),
@@ -60,6 +79,7 @@ public class Grabber implements Requirable {
         )
     );
   }
+
 
   public CommandGroup deliverGear() {
     return CommandGroup.runSequentially(
