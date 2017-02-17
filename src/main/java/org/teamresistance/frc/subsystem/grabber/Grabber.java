@@ -1,5 +1,7 @@
 package org.teamresistance.frc.subsystem.grabber;
 
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.VictorSP;
 import org.strongback.command.CommandGroup;
 import org.strongback.command.Requirable;
 import org.strongback.components.Motor;
@@ -16,14 +18,14 @@ public class Grabber implements Requirable {
   private final InvertibleSolenoid gripSolenoid;
   private final InvertibleSolenoidWithPosition extendSolenoid;
   private final InvertibleSolenoid rotateSolenoid;
-  private final Motor rotateGearMotor;
+  private final SpeedController rotateGearMotor;
   private final InvertibleDigitalInput gearPresentBannerSensor;
   private final InvertibleDigitalInput gearAlignBannerSensor;
 
   public Grabber(InvertibleSolenoid gripSolenoid,
                  InvertibleSolenoidWithPosition extendSolenoid,
                  InvertibleSolenoid rotateSolenoid,
-                 Motor rotateGearMotor,
+                 SpeedController rotateGearMotor,
                  InvertibleDigitalInput gearPresentBannerSensor,
                  InvertibleDigitalInput gearAlignBannerSensor) {
     this.gripSolenoid = gripSolenoid;

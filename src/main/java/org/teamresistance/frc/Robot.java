@@ -1,6 +1,5 @@
 package org.teamresistance.frc;
 
-import edu.wpi.first.wpilibj.Relay;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.ui.FlightStick;
@@ -11,6 +10,7 @@ import org.teamresistance.frc.subsystem.climb.Climber;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.subsystem.snorfler.Snorfler;
 
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -26,14 +26,14 @@ public class Robot extends IterativeRobot {
   private final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
   private final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
 
-  private final Snorfler snorfler = new Snorfler(IO.snorflerMotor);
-
-
-  private final MecanumDrive robotDrive =
-      new MecanumDrive(IO.lfMotor, IO.rLMotor, IO.rfMotor, IO.rrMotor, IO.navX);
-  private final Drive drive =
-      new Drive(robotDrive, leftJoystick.getRoll(), leftJoystick.getPitch(), rightJoystick.getRoll());
-  private final Climber climber = new Climber(IO.climberMotor, IO.powerPanel, IO.PDP.CLIMBER);
+//  private final Snorfler snorfler = new Snorfler(IO.snorflerMotor);
+//
+//
+//  private final MecanumDrive robotDrive =
+//      new MecanumDrive(IO.lfMotor, IO.rLMotor, IO.rfMotor, IO.rrMotor, IO.navX);
+//  private final Drive drive =
+//      new Drive(robotDrive, leftJoystick.getRoll(), leftJoystick.getPitch(), rightJoystick.getRoll());
+//  private final Climber climber = new Climber(IO.climberMotor, IO.powerPanel, IO.PDP.CLIMBER);
 
   @Override
   public void robotInit() {
@@ -113,20 +113,6 @@ public class Robot extends IterativeRobot {
 
 
 
-    reactor.onTriggered(leftJoystick.getButton(8), () -> {
-      int port = (int) SmartDashboard.getNumber("PWM Victor", -1);
-      if (port != -1) {
-        Hardware.Motors.victorSP(port).setSpeed(0.5);
-      }
-    });
-
-    reactor.onTriggered(leftJoystick.getButton(9), () -> {
-      int port = (int) SmartDashboard.getNumber("PWM Victor", -1);
-      if (port != -1) {
-        Hardware.Motors.victorSP(port).stop();
-      }
-    });
-
     reactor.onTriggeredSubmit(coJoystick.getButton(6),
         () -> new GearExtend(1.0, IO.extendSolenoid));
     reactor.onTriggeredSubmit(coJoystick.getButton(7),
@@ -154,18 +140,22 @@ public class Robot extends IterativeRobot {
   @Override
   public void teleopInit() {
     Strongback.start();
+    IO.compressor.setClosedLoopControl(true);
   }
 
   @Override
   public void teleopPeriodic() {
     // Post our orientation on the SD for debugging purposes
-    double orientation = IO.navX.getAngle();
-    SmartDashboard.putNumber("Gyro Angle", orientation);
+//    double orientation = IO.navX.getAngle();
+//    SmartDashboard.putNumber("Gyro Angle", orientation);
 
-    Feedback feedback = new Feedback(orientation);
-    drive.onUpdate(feedback);
-    IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kOn : Relay.Value.kOff);
-
+//    Feedback feedback = new Feedback(orientation);
+//    drive.onUpdate(feedback);
+    IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
+    SmartDashboard.putBoolean("Compressor Enabled?", IO.compressor.enabled());
+    SmartDashboard.putBoolean("Is Retracted?", IO.gearRetractedLimit.get());
+    SmartDashboard.putBoolean("Is Gear Present (Banner)", IO.gearFindBanner.get());
+    SmartDashboard.putBoolean("Is Gear Aligned (Banner)", IO.gearAlignBanner.get());
   }
 
   @Override

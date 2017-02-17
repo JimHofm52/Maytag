@@ -1,5 +1,6 @@
 package org.teamresistance.frc.command.grabber;
 
+import edu.wpi.first.wpilibj.SpeedController;
 import org.strongback.command.Command;
 import org.strongback.components.Motor;
 import org.teamresistance.frc.InvertibleDigitalInput;
@@ -9,18 +10,18 @@ import org.teamresistance.frc.InvertibleDigitalInput;
  */
 public class AlignGear extends Command {
 
-  private final Motor rotateGearMotor;
+  private final SpeedController rotateGearMotor;
   private final InvertibleDigitalInput gearAlignBannerSensor;
 
-  public AlignGear(Motor rotateGear, InvertibleDigitalInput gearAlignBannerSensor) {
-    super(rotateGear, gearAlignBannerSensor);
+  public AlignGear(SpeedController rotateGear, InvertibleDigitalInput gearAlignBannerSensor) {
+    super(gearAlignBannerSensor);
     this.rotateGearMotor = rotateGear;
     this.gearAlignBannerSensor = gearAlignBannerSensor;
   }
 
   @Override
   public boolean execute() {
-    rotateGearMotor.setSpeed(0.1);
+    rotateGearMotor.set(0.25);
     return gearAlignBannerSensor.get();
   }
 
@@ -29,7 +30,7 @@ public class AlignGear extends Command {
   }
 
   public void end() {
-    rotateGearMotor.setSpeed(0);
+    rotateGearMotor.set(0);
   }
 
 }
