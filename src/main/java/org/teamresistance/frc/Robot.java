@@ -1,17 +1,24 @@
 package org.teamresistance.frc;
 
 import org.strongback.Strongback;
+import org.strongback.SwitchReactor;
 import org.strongback.components.AngleSensor;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.hardware.Hardware;
-import org.teamresistance.frc.command.grabber.*;
+import org.teamresistance.frc.command.grabber.AlignGear;
+import org.teamresistance.frc.command.grabber.FindGear;
+import org.teamresistance.frc.command.grabber.GearExtend;
+import org.teamresistance.frc.command.grabber.GearRetract;
+import org.teamresistance.frc.command.grabber.GrabGear;
+import org.teamresistance.frc.command.grabber.ReleaseGear;
+import org.teamresistance.frc.command.grabber.RotateDown;
+import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.hid.DaveKnob;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
 
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -59,6 +66,8 @@ public class Robot extends IterativeRobot {
     snorflerTesting.enableFeedingShootingTest();
     climberTesting.enableClimberTest();
 
+    // Gear commands
+    SwitchReactor reactor = Strongback.switchReactor();
     reactor.onTriggeredSubmit(coJoystick.getButton(6),
         () -> new GearExtend(1.0, IO.extendSolenoid));
     reactor.onTriggeredSubmit(coJoystick.getButton(7),
