@@ -11,9 +11,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static org.strongback.control.SoftwarePIDController.SourceType;
 
 /**
- * @deprecated An important FYI: This uses the {@link Feedback#boilerOffset}, which nothing is supplying.
- * If you try to run this code, it'll output zero rotation. If you want to test this class, you'll want to
- * change either this class to use {@link Feedback#liftOffset} or supply the lift output to {@link Feedback}.
+ * @see DriveAligningGoalController
+ * @deprecated An important FYI: This uses the {@link Feedback#boilerOffset}, which nothing is
+ * supplying. If you try to run this code, it'll output zero rotation. If you want to test this
+ * class, you'll want to change either this class to use {@link Feedback#liftOffset} or supply the
+ * lift output to {@link Feedback}.
  */
 @Deprecated
 public class DriveFacingGoalController implements Controller<Drive.Signal> {
@@ -37,6 +39,7 @@ public class DriveFacingGoalController implements Controller<Drive.Signal> {
   public Drive.Signal computeSignal(Drive.Signal feedForward, Feedback feedback) {
     // If we see the goal, rotate toward it. Otherwise, pass the feed forward through.
     OptionalDouble maybeOffset = feedback.boilerOffset;
+
     double rotateSpeed;
     if (maybeOffset.isPresent()) {
       rotateSpeed = pid.calculate(maybeOffset.getAsDouble());
@@ -52,6 +55,7 @@ public class DriveFacingGoalController implements Controller<Drive.Signal> {
     } else {
       rotateSpeed = feedForward.rotateSpeed;
     }
+
     SmartDashboard.putNumber("Vision: Face Goal rotate speed", rotateSpeed);
     return Drive.Signal.createFieldOriented(feedForward.xSpeed, feedForward.ySpeed, rotateSpeed);
   }

@@ -15,6 +15,7 @@ import org.teamresistance.frc.subsystem.drive.DriveFacingGoalController;
  *
  * @author Rothanak So
  * @see LiftPipeline
+ * @see AlignGoalCommand
  */
 public class FaceGoalCommand extends DriveCommand {
 

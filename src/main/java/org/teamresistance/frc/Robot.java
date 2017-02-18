@@ -1,6 +1,5 @@
 package org.teamresistance.frc;
 
-import edu.wpi.first.wpilibj.Sendable;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -8,32 +7,19 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.strongback.Strongback;
-import org.strongback.SwitchReactor;
-import org.strongback.command.Command;
 import org.strongback.components.AngleSensor;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.hardware.Hardware;
-import org.teamresistance.frc.command.FaceGoalCommand;
-import org.teamresistance.frc.command.grabber.AlignGear;
-import org.teamresistance.frc.command.grabber.FindGear;
-import org.teamresistance.frc.command.FaceGoalCommand;
-import org.teamresistance.frc.command.grabber.GearExtend;
-import org.teamresistance.frc.command.grabber.GearRetract;
-import org.teamresistance.frc.command.grabber.GrabGear;
-import org.teamresistance.frc.command.grabber.ReleaseGear;
-import org.teamresistance.frc.command.grabber.RotateDown;
-import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.hid.DaveKnob;
 import org.teamresistance.frc.sensor.lift.LiftListener;
 import org.teamresistance.frc.sensor.lift.LiftPipeline;
+import org.teamresistance.frc.subsystem.climb.Climber;
 import org.teamresistance.frc.subsystem.drive.Drive;
+import org.teamresistance.frc.subsystem.grabber.Grabber;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
 import org.teamresistance.frc.util.testing.GrabberTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
-import org.teamresistance.frc.subsystem.climb.Climber;
-//import org.teamresistance.frc.subsystem.drive.Drive;
-import org.teamresistance.frc.subsystem.grabber.Grabber;
 
 import java.util.ArrayList;
 import java.util.OptionalDouble;
@@ -47,6 +33,8 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.VisionThread;
+
+//import org.teamresistance.frc.subsystem.drive.Drive;
 
 /**
  * Main robot class. Override methods from {@link IterativeRobot} to define behavior.
@@ -159,13 +147,12 @@ public class Robot extends IterativeRobot {
     climberTesting.enableClimberTest();
     climberTesting.enableClimbRopeTest();
 
+    // Vision
+    driveTesting.enableVisionTest();
+
     // Gear commands
     grabberTesting.enableIndividualCommandsTest();
     grabberTesting.enableClimbRopeTest();
-
-    // Face the boiler target while button 8 is held
-    reactor.onTriggeredSubmit(leftJoystick.getButton(8), () -> new FaceGoalCommand(drive));
-    reactor.onUntriggeredSubmit(leftJoystick.getButton(8), () -> Command.cancel(drive));
   }
 
   @Override
