@@ -2,7 +2,7 @@ package org.teamresistance.frc.command;
 
 import org.strongback.command.Command;
 import org.strongback.command.Requirable;
-import org.teamresistance.frc.sensor.boiler.BoilerPipeline;
+import org.teamresistance.frc.sensor.boiler.LiftPipeline;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.subsystem.drive.DriveFacingBoilerController;
 
@@ -14,7 +14,7 @@ import org.teamresistance.frc.subsystem.drive.DriveFacingBoilerController;
  * requires a lease on {@link Drive}.
  *
  * @author Rothanak So
- * @see BoilerPipeline
+ * @see LiftPipeline
  */
 public class FaceGoalCommand extends DriveCommand {
 

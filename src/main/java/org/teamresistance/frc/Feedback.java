@@ -25,10 +25,12 @@ import java.util.OptionalDouble;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class Feedback {
   public final double currentAngle;
-  public final OptionalDouble goalOffset;
+  public final OptionalDouble boilerOffset;
+  public final OptionalDouble liftOffset;
 
-  Feedback(double currentAngle, OptionalDouble goalOffset) {
+  Feedback(double currentAngle, OptionalDouble boilerOffset, OptionalDouble liftOffset) {
     this.currentAngle = currentAngle;
-    this.goalOffset = goalOffset;
+    this.boilerOffset = boilerOffset;
+    this.liftOffset = liftOffset;
   }
 }

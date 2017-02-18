@@ -11,11 +11,11 @@ import java.util.OptionalDouble;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.VisionPipeline;
 
-public class BoilerPipeline implements VisionPipeline {
+public class LiftPipeline implements VisionPipeline {
   private static final int CANVAS_WIDTH_PX = 320;
   private final GearGrip pipeline;
 
-  public BoilerPipeline() {
+  public LiftPipeline() {
     pipeline = new GearGrip();
   }
 
@@ -38,12 +38,15 @@ public class BoilerPipeline implements VisionPipeline {
     SmartDashboard.putNumber("Vision: Number of contours", numberOfContours);
     if (numberOfContours != 1) return OptionalDouble.empty();
 
-    // Calculate the offset, relative to the center with a domain of -1 to +1
+    // Calculate the x offset, relative to the center with a domain of -1 to +1
     return hulls.stream().mapToDouble(hull -> {
       Moments moments = Imgproc.moments(hull);
-      double centerX = moments.get_m10() / moments.get_m00();
-      //return ((2 * centerX) / CANVAS_WIDTH_PX) - 1; // relativeCenterX
-      return centerX;
+
+      double targetCenterXPx = moments.get_m10() / moments.get_m00();
+      double canvasCenterXPx = CANVAS_WIDTH_PX / 2;
+
+      // Relative x of the target, where 0 is the image center and +1 is the rightmost edge
+      return (targetCenterXPx - canvasCenterXPx) / canvasCenterXPx;
     }).average();
   }
 }

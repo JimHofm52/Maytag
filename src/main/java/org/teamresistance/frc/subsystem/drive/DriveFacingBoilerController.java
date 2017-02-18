@@ -10,6 +10,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static org.strongback.control.SoftwarePIDController.SourceType;
 
+/**
+ * @deprecated Don't use me! There's nothing detecting the boiler right now. That code was changed
+ * so that it would detect the goal. Play with {@link }
+ */
+@Deprecated
 public class DriveFacingBoilerController implements Controller<Drive.Signal> {
   private static final double TOLERANCE = 0.02;
   private static final double KP = 3; // maps the input domain to the output domain [-.6, +.6]
@@ -33,7 +38,7 @@ public class DriveFacingBoilerController implements Controller<Drive.Signal> {
   @Override
   public Drive.Signal computeSignal(Drive.Signal feedForward, Feedback feedback) {
     // If we see the goal, rotate toward it. Otherwise, pass the feed forward through.
-    OptionalDouble maybeOffset = feedback.goalOffset;
+    OptionalDouble maybeOffset = feedback.boilerOffset;
     double rotateSpeed;
     if (maybeOffset.isPresent()) {
       rotateSpeed = pid.calculate(maybeOffset.getAsDouble());

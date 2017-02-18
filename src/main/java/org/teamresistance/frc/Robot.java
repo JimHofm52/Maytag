@@ -24,20 +24,19 @@ import org.teamresistance.frc.command.grabber.ReleaseGear;
 import org.teamresistance.frc.command.grabber.RotateDown;
 import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.hid.DaveKnob;
-import org.teamresistance.frc.sensor.boiler.BoilerListener;
-import org.teamresistance.frc.sensor.boiler.BoilerPipeline;
+import org.teamresistance.frc.sensor.boiler.LiftListener;
+import org.teamresistance.frc.sensor.boiler.LiftPipeline;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
 import org.teamresistance.frc.util.testing.GrabberTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
-import org.teamresistance.frc.command.grabber.*;
 import org.teamresistance.frc.subsystem.climb.Climber;
 //import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.subsystem.grabber.Grabber;
-import org.teamresistance.frc.subsystem.snorfler.Snorfler;
 
 import java.util.ArrayList;
+import java.util.OptionalDouble;
 
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
@@ -91,20 +90,14 @@ public class Robot extends IterativeRobot {
   // Vision
   private boolean visionThreadStarted = false;
   private final UsbCamera axisCamera = CameraServer.getInstance().startAutomaticCapture();
-  private final BoilerPipeline pipeline = new BoilerPipeline();
-  private final BoilerListener boilerListener = new BoilerListener();
-  private final VisionThread visionThread = new VisionThread(axisCamera, pipeline, boilerListener);
+  private final LiftPipeline pipeline = new LiftPipeline();
+  private final LiftListener liftListener = new LiftListener();
+  private final VisionThread visionThread = new VisionThread(axisCamera, pipeline, liftListener);
   private final Thread postVisionThread = new Thread(() -> {
-    // This entire thread is solely responsible for outputting post-processed images to the
+    // FIXME: May have been causing problems earlier. Not really needed anyway, so it's "off" (see teleopInit)
+    // This entire thread is only responsible for outputting post-processed images to the
     // SmartDashboard. It doesn't do any vision processing itself--the VisionThread handles that.
     // Don't forget to call run() after instantiating this thread.
-
-    // Change the camera settings through the SmartDashboard (?!)
-    axisCamera.setResolution(CameraConfig.WIDTH, CameraConfig.HEIGHT);
-    axisCamera.setExposureManual((int) SmartDashboard.getNumber("Axis: Exposure", 50));
-    axisCamera.setWhiteBalanceManual((int) SmartDashboard.getNumber("Axis: White Balance", 3000));
-    axisCamera.setBrightness((int) SmartDashboard.getNumber("Axis: Brightness", 50));
-
     CvSink inputSource = CameraServer.getInstance().getVideo(axisCamera);
 
     // Save bandwidth by ensuring inputSource res == outputStream res
@@ -125,7 +118,7 @@ public class Robot extends IterativeRobot {
       //grabbedFrame.copyTo(image);
 
       // Steal the most recently computed hulls from the pipeline listener
-      ArrayList<MatOfPoint> convexHulls = boilerListener.getHulls();
+      ArrayList<MatOfPoint> convexHulls = liftListener.getHulls();
 
       // Draw the raw convex hulls
       Imgproc.drawContours(image, convexHulls, -1, green, 2);
@@ -185,7 +178,7 @@ public class Robot extends IterativeRobot {
     Strongback.start();
     if (!visionThreadStarted) {
       visionThread.start(); // Vision processing
-      postVisionThread.start(); // Streaming post-processed vision
+      //postVisionThread.start(); // Streaming post-processed vision
       visionThreadStarted = true;
     }
     IO.compressor.setClosedLoopControl(true);
@@ -195,14 +188,25 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void teleopPeriodic() {
+    // Change the camera settings. SmartDashboard-tunable, but watch the GRIP pipeline for breakages.
+    axisCamera.setResolution(CameraConfig.WIDTH, CameraConfig.HEIGHT);
+    axisCamera.setExposureManual((int) SmartDashboard.getNumber("Axis: Exposure", 50));
+    axisCamera.setWhiteBalanceManual((int) SmartDashboard.getNumber("Axis: White Balance", 3000));
+    axisCamera.setBrightness((int) SmartDashboard.getNumber("Axis: Brightness", 50));
+
     SmartDashboard.putNumber("Knob: Angle", rawKnob.getAngle());
     SmartDashboard.putNumber("Knob: Speed output", knob.read());
     SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
     SmartDashboard.putData("PDP", IO.powerPanel);
 
-    Feedback feedback = new Feedback(IO.gyro.getAngle(), boilerListener.getRelativeOffset());
+    Feedback feedback = new Feedback(
+        IO.navX.getAngle(), // angle
+        OptionalDouble.empty(), // nothing detects the boiler yet; effectively a "null" double
+        liftListener.getRelativeOffset() // lift offset, between -1 and +1
+    );
     SmartDashboard.putNumber("Gyro", feedback.currentAngle);
-    SmartDashboard.putNumber("Goal Offset", feedback.goalOffset.orElse(-1));
+    SmartDashboard.putNumber("Boiler Offset", feedback.boilerOffset.orElse(-1));
+    SmartDashboard.putNumber("Lift Offset", feedback.liftOffset.orElse(-1));
 
     drive.onUpdate(feedback);
 

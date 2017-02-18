@@ -8,7 +8,7 @@ import java.util.OptionalDouble;
 import edu.wpi.first.wpilibj.vision.VisionRunner;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class BoilerListener implements BoilerSensor, VisionRunner.Listener<BoilerPipeline> {
+public class LiftListener implements BoilerSensor, VisionRunner.Listener<LiftPipeline> {
   private boolean pipelineRan;
   private OptionalDouble relativeOffset;
 
@@ -16,7 +16,7 @@ public class BoilerListener implements BoilerSensor, VisionRunner.Listener<Boile
   private ArrayList<MatOfPoint> hulls;
 
   @Override
-  public void copyPipelineOutputs(BoilerPipeline pipeline) {
+  public void copyPipelineOutputs(LiftPipeline pipeline) {
     synchronized (visionLock) {
       pipelineRan = true;
       relativeOffset = pipeline.unsafeGetRelativeOffset();
