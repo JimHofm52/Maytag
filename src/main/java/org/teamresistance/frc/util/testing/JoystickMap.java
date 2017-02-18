@@ -25,5 +25,6 @@ class JoystickMap {
     static final int SNORFLE_IN = 11;
     static final int SNORFLE_OUT = 10;
     static final int CLIMBER = 8;
+    static final int CLIMBER_STOP = 9;
   }
 }

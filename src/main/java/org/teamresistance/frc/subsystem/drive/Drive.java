@@ -73,7 +73,8 @@ public class Drive extends ClosedLooping<Drive.Signal> implements Requirable {
       double direction = Math.toDegrees(Math.atan2(signal.ySpeed, signal.xSpeed));
       robotDrive.mecanumDrive_Polar(magnitude, direction, signal.rotateSpeed);
     } else {
-      // Field-oriented
+      // Field-orient
+
       robotDrive.mecanumDrive_Cartesian(signal.xSpeed, signal.ySpeed, signal.rotateSpeed, gyro.getAngle());
     }
   }

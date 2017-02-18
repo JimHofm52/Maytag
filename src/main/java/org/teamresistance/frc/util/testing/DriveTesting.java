@@ -5,6 +5,7 @@ import org.strongback.command.Command;
 import org.strongback.command.CommandGroup;
 import org.strongback.components.ui.FlightStick;
 import org.teamresistance.frc.NavX;
+import org.teamresistance.frc.Robot;
 import org.teamresistance.frc.command.BrakeCommand;
 import org.teamresistance.frc.command.DriveTimedCommand;
 import org.teamresistance.frc.command.HoldAngleCommand;
@@ -34,7 +35,7 @@ public class DriveTesting extends CommandTesting {
 
   public void enableAngleHold() {
     // Hold the current angle of the robot while the trigger is held
-    reactor.onTriggeredSubmit(joystickA.getButton(ANGLE_HOLD), () -> new HoldAngleCommand(drive, navX.getAngle()));
+    reactor.onTriggeredSubmit(joystickA.getButton(ANGLE_HOLD), () -> new HoldAngleCommand(drive, Robot.rawKnob.getAngle()));
     reactor.onUntriggeredSubmit(joystickA.getButton(ANGLE_HOLD), () -> {
       drive.setOpenLoop();
       return Command.cancel(drive);

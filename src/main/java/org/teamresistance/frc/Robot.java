@@ -1,5 +1,6 @@
 package org.teamresistance.frc;
 
+import edu.wpi.first.wpilibj.Joystick;
 import org.strongback.Strongback;
 import org.strongback.components.AngleSensor;
 import org.strongback.components.ui.FlightStick;
@@ -7,6 +8,7 @@ import org.strongback.hardware.Hardware;
 import org.teamresistance.frc.hid.DaveKnob;
 import org.teamresistance.frc.subsystem.climb.Climber;
 import org.teamresistance.frc.subsystem.drive.Drive;
+import org.teamresistance.frc.subsystem.drive.DriveHoldingAngleController;
 import org.teamresistance.frc.subsystem.grabber.Grabber;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
@@ -30,15 +32,21 @@ public class Robot extends IterativeRobot {
   private final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
   private final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
   private final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
+  private static final FlightStick coBox = Hardware.HumanInterfaceDevices.logitechAttack3D(3);
 
   // Dave knob (runs on third joystick); does not rotate the bot, disabled for now
-  private final AngleSensor rawKnob = () -> coJoystick.getAxis(2).read() * -180 + 180;
-  private final DaveKnob knob = new DaveKnob(rawKnob, IO.navX);
+  public static final AngleSensor rawKnob = () -> coBox.getAxis(2).read() * -180 + 180;
+  public static final DaveKnob knob = new DaveKnob(rawKnob, IO.navX);
 
   // Drive subsystem
+//  private final Drive drive = new Drive(
+//      new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
+//      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), knob);
+
+
   private final Drive drive = new Drive(
       new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
-      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), knob);
+      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), rightJoystick.getRoll());
 
   private final Grabber grabber = new Grabber(
       IO.gripSolenoid,
@@ -63,14 +71,12 @@ public class Robot extends IterativeRobot {
 
     // All driving-related tests run on the left joystick
     driveTesting.enableAngleHold();
-    driveTesting.enableAngleHoldTests();
     driveTesting.enableCancelling();
     driveTesting.enableNavXReset();
 
     // All subsystem tests are press-and-hold buttons on the right joystick
     snorflerTesting.enableSnorflerTest();
     snorflerTesting.enableFeedingShootingTest();
-    climberTesting.enableClimberTest();
     climberTesting.enableClimbRopeTest();
 
     // Gear commands
@@ -94,15 +100,17 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("Knob: Angle", rawKnob.getAngle());
-    SmartDashboard.putNumber("Knob: Speed output", knob.read());
+    SmartDashboard.putNumber("!!!!!!Knob: Angle", rawKnob.getAngle());
+    SmartDashboard.putNumber("!!!!!!Knob: Speed output", knob.read());
     SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
-    SmartDashboard.putData("PDP", IO.powerPanel);
+//    SmartDashboard.putData("PDP", IO.powerPanel);
 
     Feedback feedback = new Feedback(IO.navX.getAngle());
-    SmartDashboard.putNumber("Gyro", feedback.currentAngle);
+    SmartDashboard.putNumber("THIS Gyro!!!!!!!!", feedback.currentAngle);
 
     drive.onUpdate(feedback);
+
+
 
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     SmartDashboard.putBoolean("Compressor Enabled?", IO.compressor.enabled());

@@ -44,14 +44,14 @@ public final class DaveKnob implements ContinuousRange {
 
   private static SynchronousPID createPid(double setpoint) {
     return new SynchronousPID("Knob Rotation", SourceType.DISTANCE,
-        DriveHoldingAngleController.KP,
-        DriveHoldingAngleController.KI,
+        0.022,
+        0,
         DriveHoldingAngleController.KD)
         .withConfigurations(controller -> controller
             .withInputRange(0, 360) // gyro
-            .withOutputRange(-0.1, 0.1) // motor
+            .withOutputRange(-1.0, 1.0) // motor
             .withTarget(setpoint) // degrees
-            .withTolerance(2) // degrees
+            .withTolerance(3) // degrees
             .continuousInputs(true));
   }
 }
