@@ -2,6 +2,7 @@ package org.teamresistance.frc.subsystem.drive;
 
 import org.strongback.control.SoftwarePIDController.SourceType;
 import org.teamresistance.frc.Feedback;
+import org.teamresistance.frc.IO;
 import org.teamresistance.frc.subsystem.Controller;
 import org.teamresistance.frc.util.SynchronousPID;
 
@@ -31,6 +32,7 @@ public class DriveHoldingAngleController implements Controller<Drive.Signal> {
         .withConfigurations(controller -> controller
             .withInputRange(0, 360) // navX
             .withOutputRange(-1.0, 1.0) // motor
+//            .withTarget(targetDegrees)
             .withTarget(targetDegrees)
             .withTolerance(TOLERANCE)
             .continuousInputs(true));

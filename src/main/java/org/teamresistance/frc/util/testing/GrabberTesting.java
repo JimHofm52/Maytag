@@ -1,5 +1,6 @@
 package org.teamresistance.frc.util.testing;
 
+import org.strongback.command.CommandGroup;
 import org.strongback.components.ui.FlightStick;
 import org.teamresistance.frc.IO;
 import org.teamresistance.frc.command.grabber.*;
@@ -36,8 +37,11 @@ public class GrabberTesting extends CommandTesting {
         () -> new ReleaseGear(1.0, IO.gripSolenoid));
   }
 
-  public void enableClimbRopeTest() {
-    reactor.onTriggeredSubmit(joystickC.getButton(2), () -> grabber.pickupGear());
+  public void enableSequenceTest() {
+//    reactor.onTriggeredSubmit(joystickC.getButton(2), () -> {Grabber.interrrupted = false;
+//                                                              return grabber.pickUpGearSequence();});
+    reactor.onTriggeredSubmit(joystickC.getButton(2), () -> grabber.pickUpGearSequence());
+//    reactor.onUntriggeredSubmit(joystickC.getButton(2), () -> grabber.interruptSequence());
     reactor.onTriggeredSubmit(joystickC.getButton(3), () -> grabber.deliverGear());
   }
 }

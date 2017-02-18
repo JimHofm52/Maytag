@@ -40,9 +40,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author Ellis Levine
  */
 public class Robot extends IterativeRobot {
-  private final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
-  private final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
-  private final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
+  public final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
+  public final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
+  public static final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
+
+  public static boolean test = false;
 
   // Dave knob (runs on third joystick); does not rotate the bot, disabled for now
   private final AngleSensor rawKnob = () -> coJoystick.getAxis(2).read() * -180 + 180;
@@ -88,7 +90,7 @@ public class Robot extends IterativeRobot {
 
     // Gear commands
     grabberTesting.enableIndividualCommandsTest();
-    grabberTesting.enableClimbRopeTest();
+    grabberTesting.enableSequenceTest();
 
   }
 
@@ -103,6 +105,7 @@ public class Robot extends IterativeRobot {
     IO.compressor.setClosedLoopControl(true);
     SmartDashboard.putNumber("Agitator Power",0.35);
     SmartDashboard.putNumber("Shooter Power", 0.80);
+
   }
 
   @Override
@@ -122,6 +125,11 @@ public class Robot extends IterativeRobot {
     SmartDashboard.putBoolean("Is Retracted?", IO.gearRetractedLimit.get());
     SmartDashboard.putBoolean("Is Gear Present (Banner)", IO.gearFindBanner.get());
     SmartDashboard.putBoolean("Is Gear Aligned (Banner)", IO.gearAlignBanner.get());
+
+    SmartDashboard.putBoolean("Button 2 Pressed", coJoystick.getButton(2).isTriggered());
+    test = coJoystick.getButton(2).isTriggered();
+
+//    SmartDashboard.putBoolean("Grabber Interrupted", Grabber.interrrupted);
   }
 
   @Override

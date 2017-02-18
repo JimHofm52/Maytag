@@ -1,6 +1,5 @@
 package org.teamresistance.frc.command.grabber;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.strongback.command.Command;
 import org.teamresistance.frc.InvertibleSolenoidWithPosition;

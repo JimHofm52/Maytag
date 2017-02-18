@@ -13,6 +13,7 @@ public class AlignGear extends Command {
   private final SpeedController rotateGearMotor;
   private final InvertibleDigitalInput gearAlignBannerSensor;
 
+
   public AlignGear(SpeedController rotateGear, InvertibleDigitalInput gearAlignBannerSensor) {
     super(gearAlignBannerSensor);
     this.rotateGearMotor = rotateGear;
