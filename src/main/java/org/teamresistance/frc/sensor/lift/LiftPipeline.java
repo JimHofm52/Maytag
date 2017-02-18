@@ -1,4 +1,4 @@
-package org.teamresistance.frc.sensor.boiler;
+package org.teamresistance.frc.sensor.lift;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -13,10 +13,10 @@ import edu.wpi.first.wpilibj.vision.VisionPipeline;
 
 public class LiftPipeline implements VisionPipeline {
   private static final int CANVAS_WIDTH_PX = 320;
-  private final GearGrip pipeline;
+  private final LiftGrip pipeline;
 
   public LiftPipeline() {
-    pipeline = new GearGrip();
+    pipeline = new LiftGrip();
   }
 
   @Override

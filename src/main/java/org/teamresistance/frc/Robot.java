@@ -24,8 +24,8 @@ import org.teamresistance.frc.command.grabber.ReleaseGear;
 import org.teamresistance.frc.command.grabber.RotateDown;
 import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.hid.DaveKnob;
-import org.teamresistance.frc.sensor.boiler.LiftListener;
-import org.teamresistance.frc.sensor.boiler.LiftPipeline;
+import org.teamresistance.frc.sensor.lift.LiftListener;
+import org.teamresistance.frc.sensor.lift.LiftPipeline;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
@@ -163,7 +163,7 @@ public class Robot extends IterativeRobot {
     grabberTesting.enableIndividualCommandsTest();
     grabberTesting.enableClimbRopeTest();
 
-    // Face the vision target while button 8 is held
+    // Face the boiler target while button 8 is held
     reactor.onTriggeredSubmit(leftJoystick.getButton(8), () -> new FaceGoalCommand(drive));
     reactor.onUntriggeredSubmit(leftJoystick.getButton(8), () -> Command.cancel(drive));
   }

@@ -2,9 +2,9 @@ package org.teamresistance.frc.command;
 
 import org.strongback.command.Command;
 import org.strongback.command.Requirable;
-import org.teamresistance.frc.sensor.boiler.LiftPipeline;
+import org.teamresistance.frc.sensor.lift.LiftPipeline;
 import org.teamresistance.frc.subsystem.drive.Drive;
-import org.teamresistance.frc.subsystem.drive.DriveFacingBoilerController;
+import org.teamresistance.frc.subsystem.drive.DriveFacingGoalController;
 
 /**
  * A command that forever turns the robot to face the goal.
@@ -19,6 +19,6 @@ import org.teamresistance.frc.subsystem.drive.DriveFacingBoilerController;
 public class FaceGoalCommand extends DriveCommand {
 
   public FaceGoalCommand(Drive drive) {
-    super(drive, new DriveFacingBoilerController(), false);
+    super(drive, new DriveFacingGoalController(), false);
   }
 }

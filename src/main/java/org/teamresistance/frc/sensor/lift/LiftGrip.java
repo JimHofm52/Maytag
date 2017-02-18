@@ -1,4 +1,4 @@
-package org.teamresistance.frc.sensor.boiler;
+package org.teamresistance.frc.sensor.lift;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author GRIP
  */
-public class GearGrip {
+public class LiftGrip {
 
   //Outputs
   private Mat cvResizeOutput = new Mat();
@@ -42,7 +42,7 @@ public class GearGrip {
   /**
    * This constructor sets up the pipeline
    */
-  public GearGrip() {
+  public LiftGrip() {
   }
 
   /**

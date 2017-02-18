@@ -1,4 +1,4 @@
-package org.teamresistance.frc.sensor.boiler;
+package org.teamresistance.frc.sensor.lift;
 
 import org.opencv.core.MatOfPoint;
 
@@ -8,7 +8,7 @@ import java.util.OptionalDouble;
 import edu.wpi.first.wpilibj.vision.VisionRunner;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class LiftListener implements BoilerSensor, VisionRunner.Listener<LiftPipeline> {
+public class LiftListener implements LiftSensor, VisionRunner.Listener<LiftPipeline> {
   private boolean pipelineRan;
   private OptionalDouble relativeOffset;
 

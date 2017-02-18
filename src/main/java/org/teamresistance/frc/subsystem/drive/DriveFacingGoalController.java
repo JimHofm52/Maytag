@@ -11,28 +11,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static org.strongback.control.SoftwarePIDController.SourceType;
 
 /**
- * @deprecated Don't use me! There's nothing detecting the boiler right now. That code was changed
- * so that it would detect the goal. Play with {@link }
+ * @deprecated An important FYI: This uses the {@link Feedback#boilerOffset}, which nothing is supplying.
+ * If you try to run this code, it'll output zero rotation. If you want to test this class, you'll want to
+ * change either this class to use {@link Feedback#liftOffset} or supply the lift output to {@link Feedback}.
  */
 @Deprecated
-public class DriveFacingBoilerController implements Controller<Drive.Signal> {
+public class DriveFacingGoalController implements Controller<Drive.Signal> {
   private static final double TOLERANCE = 0.02;
-  private static final double KP = 3; // maps the input domain to the output domain [-.6, +.6]
+  private static final double KP = 3; // maps the input domain to the output domain [-.8, +.8]
   private static final double KD = 0;
   private static final double KI = 0;
 
   private final SynchronousPID pid;
 
-  public DriveFacingBoilerController() {
-    double kp = SmartDashboard.getNumber("Vision: FaceBoiler PID/p", KP);
-    this.pid = new SynchronousPID("Face Boiler PID", SourceType.DISTANCE, KP, KI, KD)
+  public DriveFacingGoalController() {
+    this.pid = new SynchronousPID("Face Goal PID", SourceType.DISTANCE, KP, KI, KD)
         .withConfigurations(controller -> controller
             .withInputRange(-1.0, 1.0) // offset percentage
-            .withOutputRange(-.7, .7) // motor
+            .withOutputRange(-.8, .8) // motor
             .withTarget(0) // we want to be centered
             .withTolerance(TOLERANCE));
-
-    SmartDashboard.putData("Vision: FaceBoiler PID", pid);
   }
 
   @Override
@@ -54,7 +52,7 @@ public class DriveFacingBoilerController implements Controller<Drive.Signal> {
     } else {
       rotateSpeed = feedForward.rotateSpeed;
     }
-    SmartDashboard.putNumber("Vision: FaceBoiler rotate speed", rotateSpeed);
+    SmartDashboard.putNumber("Vision: Face Goal rotate speed", rotateSpeed);
     return Drive.Signal.createFieldOriented(feedForward.xSpeed, feedForward.ySpeed, rotateSpeed);
   }
 }
