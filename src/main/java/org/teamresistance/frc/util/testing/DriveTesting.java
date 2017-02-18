@@ -35,7 +35,7 @@ public class DriveTesting extends CommandTesting {
 
   public void enableAngleHold() {
     // Hold the current angle of the robot while the trigger is held
-    reactor.onTriggeredSubmit(joystickA.getButton(ANGLE_HOLD), () -> new HoldAngleCommand(drive, Robot.rawKnob.getAngle()));
+    reactor.onTriggeredSubmit(joystickA.getButton(ANGLE_HOLD), () -> new HoldAngleCommand(drive, navX.getAngle()));
     reactor.onUntriggeredSubmit(joystickA.getButton(ANGLE_HOLD), () -> {
       drive.setOpenLoop();
       return Command.cancel(drive);

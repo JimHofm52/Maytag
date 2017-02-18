@@ -32,21 +32,11 @@ public class Robot extends IterativeRobot {
   private final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
   private final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
   private final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
-  private static final FlightStick coBox = Hardware.HumanInterfaceDevices.logitechAttack3D(3);
-
-  // Dave knob (runs on third joystick); does not rotate the bot, disabled for now
-  public static final AngleSensor rawKnob = () -> coBox.getAxis(2).read() * -180 + 180;
-  public static final DaveKnob knob = new DaveKnob(rawKnob, IO.navX);
-
-  // Drive subsystem
-//  private final Drive drive = new Drive(
-//      new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
-//      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), knob);
+  private final CodriverBox codriverBox = new CodriverBox(3);
 
 
-  private final Drive drive = new Drive(
-      new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
-      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), rightJoystick.getRoll());
+  private MecanumDrive drive;
+
 
   private final Grabber grabber = new Grabber(
       IO.gripSolenoid,
@@ -62,17 +52,11 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     Strongback.configure().recordNoEvents().recordNoData();
-    DriveTesting driveTesting = new DriveTesting(drive, IO.navX, leftJoystick, rightJoystick, coJoystick);
     SnorflerTesting snorflerTesting = new SnorflerTesting(leftJoystick, rightJoystick, coJoystick);
     ClimberTesting climberTesting = new ClimberTesting(climber, leftJoystick, rightJoystick, coJoystick);
     GrabberTesting grabberTesting = new GrabberTesting(grabber, leftJoystick, rightJoystick, coJoystick);
 
     IO.cameraLights.set(Relay.Value.kForward); // Does not work, might be a hardware issue.
-
-    // All driving-related tests run on the left joystick
-    driveTesting.enableAngleHold();
-    driveTesting.enableCancelling();
-    driveTesting.enableNavXReset();
 
     // All subsystem tests are press-and-hold buttons on the right joystick
     snorflerTesting.enableSnorflerTest();
@@ -83,6 +67,9 @@ public class Robot extends IterativeRobot {
     grabberTesting.enableIndividualCommandsTest();
     grabberTesting.enableClimbRopeTest();
 
+    drive = new MecanumDrive(new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
+        IO.navX);
+    drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
 
   @Override
@@ -96,21 +83,28 @@ public class Robot extends IterativeRobot {
     IO.compressor.setClosedLoopControl(true);
     SmartDashboard.putNumber("Agitator Power",0.35);
     SmartDashboard.putNumber("Shooter Power", 0.80);
+
+    drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
+
+  private boolean fieldOrientedState = false;
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("!!!!!!Knob: Angle", rawKnob.getAngle());
-    SmartDashboard.putNumber("!!!!!!Knob: Speed output", knob.read());
     SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
 //    SmartDashboard.putData("PDP", IO.powerPanel);
 
     Feedback feedback = new Feedback(IO.navX.getAngle());
     SmartDashboard.putNumber("THIS Gyro!!!!!!!!", feedback.currentAngle);
 
-    drive.onUpdate(feedback);
+    boolean currentOrientationState = leftJoystick.getButton(8).isTriggered();
+    if(!fieldOrientedState && currentOrientationState) {
+      drive.nextState();
+    }
+    fieldOrientedState = !currentOrientationState;
 
-
+    codriverBox.update(1.0);
+    drive.drive(leftJoystick.getRoll().read(), leftJoystick.getPitch().read(), rightJoystick.getRoll().read(), codriverBox.getRotation());
 
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     SmartDashboard.putBoolean("Compressor Enabled?", IO.compressor.enabled());
