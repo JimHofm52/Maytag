@@ -102,11 +102,11 @@ public class IO {
       new InvertibleDigitalInput(DIO.GRABULATOR_RETRACTED_LIMIT, true);
 
   // Pneumatic Cylinders (controlled via Solenoids)
-  public static final InvertibleSolenoid gripSolenoid =
+  public static final SingleSolenoid gripSolenoid =
       new InvertibleSolenoid(CAN.PCM, PCM.GEAR_GRIP_SOLENOID, false);
-  public static final InvertibleSolenoidWithPosition extendSolenoid =
+  public static final SingleSolenoid extendSolenoid =
       new InvertibleSolenoidWithPosition(CAN.PCM, PCM.GEAR_EXTEND_SOLENOID, false, gearRetractedLimit);
-  public static final InvertibleSolenoid rotateSolenoid =
+  public static final SingleSolenoid rotateSolenoid =
       new InvertibleSolenoid(CAN.PCM, PCM.GEAR_ROTATE_SOLENOID, false);
 
   // Compressor and Relay

@@ -4,15 +4,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.strongback.command.Command;
 import org.teamresistance.frc.InvertibleSolenoid;
 import org.teamresistance.frc.InvertibleSolenoidWithPosition;
+import org.teamresistance.frc.SingleSolenoid;
 
 /**
  * Created by shrey on 2/7/2017.
  */
 public class RotateDown extends Command {
-  private final InvertibleSolenoidWithPosition extendSolenoid;
-  private final InvertibleSolenoid rotateSolenoid;
+  private final SingleSolenoid extendSolenoid;
+  private final SingleSolenoid rotateSolenoid;
 
-  public RotateDown(double timeLimit, InvertibleSolenoidWithPosition extendSolenoid, InvertibleSolenoid rotateSolenoid) {
+  public RotateDown(double timeLimit, SingleSolenoid extendSolenoid, SingleSolenoid rotateSolenoid) {
     super(timeLimit, extendSolenoid, rotateSolenoid);
     this.extendSolenoid = extendSolenoid;
     this.rotateSolenoid = rotateSolenoid;

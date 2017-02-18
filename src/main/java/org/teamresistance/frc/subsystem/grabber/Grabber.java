@@ -8,6 +8,7 @@ import org.strongback.components.Motor;
 import org.teamresistance.frc.InvertibleDigitalInput;
 import org.teamresistance.frc.InvertibleSolenoid;
 import org.teamresistance.frc.InvertibleSolenoidWithPosition;
+import org.teamresistance.frc.SingleSolenoid;
 import org.teamresistance.frc.command.grabber.*;
 
 /**
@@ -15,9 +16,9 @@ import org.teamresistance.frc.command.grabber.*;
  */
 public class Grabber implements Requirable {
 
-  private final InvertibleSolenoid gripSolenoid;
-  private final InvertibleSolenoidWithPosition extendSolenoid;
-  private final InvertibleSolenoid rotateSolenoid;
+  private final SingleSolenoid gripSolenoid;
+  private final SingleSolenoid extendSolenoid;
+  private final SingleSolenoid rotateSolenoid;
   private final SpeedController rotateGearMotor;
   private final InvertibleDigitalInput gearPresentBannerSensor;
   private final InvertibleDigitalInput gearAlignBannerSensor;
@@ -70,8 +71,8 @@ public class Grabber implements Requirable {
             new ReleaseGear(1.0, gripSolenoid)
         ),
         new FindGear(gearPresentBannerSensor),
-        new GearExtend(1.0, extendSolenoid),
-        new GrabGear(1.0, gripSolenoid),
+        new GearExtend(0.5, extendSolenoid),
+        new GrabGear(0.1, gripSolenoid),
         new GearRetract(extendSolenoid),
         new RotateUp(1.0, extendSolenoid, rotateSolenoid),
         new AlignGear(rotateGearMotor, gearAlignBannerSensor)

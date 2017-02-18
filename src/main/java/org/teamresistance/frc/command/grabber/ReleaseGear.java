@@ -2,15 +2,16 @@ package org.teamresistance.frc.command.grabber;
 
 import org.strongback.command.Command;
 import org.teamresistance.frc.InvertibleSolenoid;
+import org.teamresistance.frc.SingleSolenoid;
 
 /**
  * Created by shrey on 2/7/2017.
  */
 public class ReleaseGear extends Command {
 
-  private final InvertibleSolenoid gripSolenoid;
+  private final SingleSolenoid gripSolenoid;
 
-  public ReleaseGear(double timeLimit, InvertibleSolenoid gripSolenoid) {
+  public ReleaseGear(double timeLimit, SingleSolenoid gripSolenoid) {
     super(timeLimit, gripSolenoid);
     this.gripSolenoid = gripSolenoid;
   }
