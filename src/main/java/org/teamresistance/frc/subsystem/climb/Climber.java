@@ -1,9 +1,10 @@
 package org.teamresistance.frc.subsystem.climb;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SpeedController;
 import org.strongback.command.Command;
 import org.strongback.command.Requirable;
 import org.strongback.components.Motor;
-import org.strongback.components.PowerPanel;
 import org.strongback.components.Stoppable;
 import org.teamresistance.frc.command.climb.ClimbRope;
 
@@ -13,12 +14,12 @@ import org.teamresistance.frc.command.climb.ClimbRope;
 public class Climber implements Requirable, Stoppable {
   private static final double CLIMB_SPEED = 1.0;
 
-  private final Motor motor;
-  private final PowerPanel pdp;
+  private final SpeedController climberMotor;
+  private final PowerDistributionPanel pdp;
   private final int channel;
 
-  public Climber(Motor motor, PowerPanel pdp, int channel) {
-    this.motor = motor;
+  public Climber(SpeedController climberMotor, PowerDistributionPanel pdp, int channel) {
+    this.climberMotor = climberMotor;
     this.pdp = pdp;
     this.channel = channel;
   }
@@ -32,11 +33,11 @@ public class Climber implements Requirable, Stoppable {
   }
 
   public void startClimbing() {
-    motor.setSpeed(CLIMB_SPEED);
+    climberMotor.set(CLIMB_SPEED);
   }
 
   @Override
   public void stop() {
-    motor.setSpeed(0);
+    climberMotor.set(0);
   }
 }
