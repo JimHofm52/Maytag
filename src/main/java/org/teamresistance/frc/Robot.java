@@ -1,5 +1,6 @@
 package org.teamresistance.frc;
 
+import edu.wpi.first.wpilibj.Sendable;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.AngleSensor;
@@ -17,6 +18,7 @@ import org.teamresistance.frc.hid.DaveKnob;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
+import org.teamresistance.frc.util.testing.GrabberTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
 import org.teamresistance.frc.command.grabber.*;
 import org.teamresistance.frc.subsystem.climb.Climber;
@@ -60,13 +62,15 @@ public class Robot extends IterativeRobot {
       IO.gearAlignBanner
   );
 
-  private final Climber climber = new Climber(IO.climberMotor, IO.powerPanel, 8);
+  private final Climber climber = new Climber(IO.climberMotor, IO.powerPanel, IO.PDP.CLIMBER);
+
   @Override
   public void robotInit() {
     Strongback.configure().recordNoEvents().recordNoData();
     DriveTesting driveTesting = new DriveTesting(drive, IO.navX, leftJoystick, rightJoystick, coJoystick);
     SnorflerTesting snorflerTesting = new SnorflerTesting(leftJoystick, rightJoystick, coJoystick);
-    ClimberTesting climberTesting = new ClimberTesting(leftJoystick, rightJoystick, coJoystick);
+    ClimberTesting climberTesting = new ClimberTesting(climber, leftJoystick, rightJoystick, coJoystick);
+    GrabberTesting grabberTesting = new GrabberTesting(grabber, leftJoystick, rightJoystick, coJoystick);
 
     IO.cameraLights.set(Relay.Value.kForward); // Does not work, might be a hardware issue.
 
@@ -80,30 +84,12 @@ public class Robot extends IterativeRobot {
     snorflerTesting.enableSnorflerTest();
     snorflerTesting.enableFeedingShootingTest();
     climberTesting.enableClimberTest();
+    climberTesting.enableClimbRopeTest();
 
     // Gear commands
-    SwitchReactor reactor = Strongback.switchReactor();
-    reactor.onTriggeredSubmit(coJoystick.getButton(4),
-        () -> new FindGear(IO.gearFindBanner));
-    reactor.onTriggeredSubmit(coJoystick.getButton(5),
-        () -> new AlignGear(IO.gearRotatorMotor, IO.gearAlignBanner));
-    reactor.onTriggeredSubmit(coJoystick.getButton(6),
-        () -> new GearExtend(1.0, IO.extendSolenoid));
-    reactor.onTriggeredSubmit(coJoystick.getButton(7),
-        () -> new GearRetract(IO.extendSolenoid));
-    reactor.onTriggeredSubmit(coJoystick.getButton(8),
-        () -> new RotateUp(1.0, IO.extendSolenoid, IO.rotateSolenoid));
-    reactor.onTriggeredSubmit(coJoystick.getButton(9),
-        () -> new RotateDown(1.0, IO.extendSolenoid, IO.rotateSolenoid));
-    reactor.onTriggeredSubmit(coJoystick.getButton(10),
-        () -> new GrabGear(1.0, IO.gripSolenoid));
-    reactor.onTriggeredSubmit(coJoystick.getButton(11),
-        () -> new ReleaseGear(1.0, IO.gripSolenoid));
+    grabberTesting.enableIndividualCommandsTest();
+    grabberTesting.enableClimbRopeTest();
 
-    reactor.onTriggeredSubmit(coJoystick.getButton(2), () -> grabber.pickupGear());
-    reactor.onTriggeredSubmit(coJoystick.getButton(3), () -> grabber.deliverGear());
-
-    reactor.onTriggeredSubmit(rightJoystick.getButton(8), () -> climber.climbRope(25, 1.0));
   }
 
   @Override
@@ -115,8 +101,8 @@ public class Robot extends IterativeRobot {
   public void teleopInit() {
     Strongback.start();
     IO.compressor.setClosedLoopControl(true);
-    SmartDashboard.putNumber("Agitator Power", 0.47);
-    SmartDashboard.putNumber("Shooter Power", 0.85);
+    SmartDashboard.putNumber("Agitator Power",0.35);
+    SmartDashboard.putNumber("Shooter Power", 0.80);
   }
 
   @Override
@@ -124,6 +110,7 @@ public class Robot extends IterativeRobot {
     SmartDashboard.putNumber("Knob: Angle", rawKnob.getAngle());
     SmartDashboard.putNumber("Knob: Speed output", knob.read());
     SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
+    SmartDashboard.putData("PDP", IO.powerPanel);
 
     Feedback feedback = new Feedback(IO.navX.getAngle());
     SmartDashboard.putNumber("Gyro", feedback.currentAngle);

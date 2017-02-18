@@ -1,5 +1,6 @@
 package org.teamresistance.frc.util.testing;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.strongback.components.ui.FlightStick;
 import org.teamresistance.frc.IO;
 
@@ -18,11 +19,11 @@ public class SnorflerTesting extends CommandTesting {
     // Trigger spins snorfler and feeder
     reactor.whileTriggered(joystickB.getButton(FEED_AND_SHOOT), () -> {
       if (joystickB.getButton(AGITATE_WHILE_FEEDING).isTriggered()) {
-        IO.agitatorMotor.set(0.3);
+        IO.agitatorMotor.set(SmartDashboard.getNumber("Agitator Power", 0.47));
       } else {
         IO.agitatorMotor.stopMotor();
       }
-      IO.shooterMotor.set(1.0);
+      IO.shooterMotor.set(SmartDashboard.getNumber("Shooter Power", 0.85));
       IO.feederMotor.set(1.0);
     });
     reactor.whileUntriggered(joystickB.getButton(FEED_AND_SHOOT), () -> {
@@ -39,5 +40,7 @@ public class SnorflerTesting extends CommandTesting {
     // Press and hold to reverse the snorfler
     reactor.onTriggered(joystickB.getButton(SNORFLE_OUT), () -> IO.snorflerMotor.set(-1.0));
     reactor.onUntriggered(joystickB.getButton(SNORFLE_OUT), IO.snorflerMotor::stopMotor);
+
+
   }
 }
