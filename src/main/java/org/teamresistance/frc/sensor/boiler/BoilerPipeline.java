@@ -42,7 +42,8 @@ public class BoilerPipeline implements VisionPipeline {
     return hulls.stream().mapToDouble(hull -> {
       Moments moments = Imgproc.moments(hull);
       double centerX = moments.get_m10() / moments.get_m00();
-      return ((2 * centerX) / CANVAS_WIDTH_PX) - 1; // relativeCenterX
+      //return ((2 * centerX) / CANVAS_WIDTH_PX) - 1; // relativeCenterX
+      return centerX;
     }).average();
   }
 }

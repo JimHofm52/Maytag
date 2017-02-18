@@ -58,6 +58,12 @@ import edu.wpi.first.wpilibj.vision.VisionThread;
  * @author Ellis Levine
  */
 public class Robot extends IterativeRobot {
+
+  public class CameraConfig {
+    public static final int WIDTH = 640;
+    public static final int HEIGHT = 480;
+  }
+
   private final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
   private final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
   private final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
@@ -93,18 +99,16 @@ public class Robot extends IterativeRobot {
     // SmartDashboard. It doesn't do any vision processing itself--the VisionThread handles that.
     // Don't forget to call run() after instantiating this thread.
 
-    // Save bandwidth by ensuring inputSource res == outputStream res
-    final int width = 640;
-    final int height = 480;
-
     // Change the camera settings through the SmartDashboard (?!)
-    axisCamera.setResolution(width, height);
+    axisCamera.setResolution(CameraConfig.WIDTH, CameraConfig.HEIGHT);
     axisCamera.setExposureManual((int) SmartDashboard.getNumber("Axis: Exposure", 50));
     axisCamera.setWhiteBalanceManual((int) SmartDashboard.getNumber("Axis: White Balance", 3000));
     axisCamera.setBrightness((int) SmartDashboard.getNumber("Axis: Brightness", 50));
 
     CvSink inputSource = CameraServer.getInstance().getVideo(axisCamera);
-    CvSource outputStream = CameraServer.getInstance().putVideo("Hello Driver", width, height);
+
+    // Save bandwidth by ensuring inputSource res == outputStream res
+    CvSource outputStream = CameraServer.getInstance().putVideo("Hello Driver", CameraConfig.WIDTH, CameraConfig.HEIGHT);
 
     // Convenient color palette for drawing our shapes (BGR format)
     final Scalar green = new Scalar(0, 255, 0);
@@ -126,7 +130,7 @@ public class Robot extends IterativeRobot {
       // Draw the raw convex hulls
       Imgproc.drawContours(image, convexHulls, -1, green, 2);
 
-      // Draw the bouding boxes
+      // Draw the bounding boxes
       convexHulls.forEach(hull -> {
         Rect rect = Imgproc.boundingRect(hull);
         Imgproc.rectangle(image, rect.tl(), rect.br(), yellow, 2);

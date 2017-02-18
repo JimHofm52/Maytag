@@ -20,7 +20,7 @@ public class DriveFacingBoilerController implements Controller<Drive.Signal> {
 
   public DriveFacingBoilerController() {
     double kp = SmartDashboard.getNumber("Vision: FaceBoiler PID/p", KP);
-    this.pid = new SynchronousPID(SourceType.DISTANCE, kp, KI, KD)
+    this.pid = new SynchronousPID("Face Boiler PID", SourceType.DISTANCE, KP, KI, KD)
         .withConfigurations(controller -> controller
             .withInputRange(-1.0, 1.0) // offset percentage
             .withOutputRange(-.7, .7) // motor
