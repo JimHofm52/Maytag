@@ -40,6 +40,7 @@ public class IO {
 
   private static final class CAN {
     private static final int PDP = 0;
+    private static final int PCM = 1;
   }
 
   private static final class RELAY {
@@ -102,13 +103,13 @@ public class IO {
 
   // Pneumatic Cylinders (controlled via Solenoids)
   public static final InvertibleSolenoid gripSolenoid =
-      new InvertibleSolenoid(PCM.GEAR_GRIP_SOLENOID, false);
+      new InvertibleSolenoid(CAN.PCM, PCM.GEAR_GRIP_SOLENOID, false);
   public static final InvertibleSolenoidWithPosition extendSolenoid =
-      new InvertibleSolenoidWithPosition(PCM.GEAR_EXTEND_SOLENOID, false, gearRetractedLimit);
+      new InvertibleSolenoidWithPosition(CAN.PCM, PCM.GEAR_EXTEND_SOLENOID, false, gearRetractedLimit);
   public static final InvertibleSolenoid rotateSolenoid =
-      new InvertibleSolenoid(PCM.GEAR_ROTATE_SOLENOID, false);
+      new InvertibleSolenoid(CAN.PCM, PCM.GEAR_ROTATE_SOLENOID, false);
 
   // Compressor and Relay
-  public static final Compressor compressor = new Compressor();
+  public static final Compressor compressor = new Compressor(CAN.PCM);
   public static final Relay compressorRelay = new Relay(RELAY.COMPRESSOR_RELAY);
 }

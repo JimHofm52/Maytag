@@ -73,10 +73,8 @@ public class Grabber implements Requirable {
         new GearExtend(1.0, extendSolenoid),
         new GrabGear(1.0, gripSolenoid),
         new GearRetract(extendSolenoid),
-        CommandGroup.runSimultaneously (
-            new RotateUp(1.0, extendSolenoid, rotateSolenoid),
-            new AlignGear(rotateGearMotor, gearAlignBannerSensor)
-        )
+        new RotateUp(1.0, extendSolenoid, rotateSolenoid),
+        new AlignGear(rotateGearMotor, gearAlignBannerSensor)
     );
   }
 

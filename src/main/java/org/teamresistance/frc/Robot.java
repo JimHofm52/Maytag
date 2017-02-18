@@ -60,6 +60,7 @@ public class Robot extends IterativeRobot {
       IO.gearAlignBanner
   );
 
+  private final Climber climber = new Climber(IO.climberMotor, IO.powerPanel, 8);
   @Override
   public void robotInit() {
     Strongback.configure().recordNoEvents().recordNoData();
@@ -102,6 +103,7 @@ public class Robot extends IterativeRobot {
     reactor.onTriggeredSubmit(coJoystick.getButton(2), () -> grabber.pickupGear());
     reactor.onTriggeredSubmit(coJoystick.getButton(3), () -> grabber.deliverGear());
 
+    reactor.onTriggeredSubmit(rightJoystick.getButton(8), () -> climber.climbRope(25, 1.0));
   }
 
   @Override
@@ -113,6 +115,8 @@ public class Robot extends IterativeRobot {
   public void teleopInit() {
     Strongback.start();
     IO.compressor.setClosedLoopControl(true);
+    SmartDashboard.putNumber("Agitator Power", 0.47);
+    SmartDashboard.putNumber("Shooter Power", 0.85);
   }
 
   @Override

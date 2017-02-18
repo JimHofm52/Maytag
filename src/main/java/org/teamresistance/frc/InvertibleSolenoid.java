@@ -11,12 +11,12 @@ public class InvertibleSolenoid implements SingleSolenoid, Requirable {
   private final Solenoid solenoid;
   private final boolean isInverted;
 
-  public InvertibleSolenoid(int channel) {
-    this(channel, false);
+  public InvertibleSolenoid(int module, int channel) {
+    this(module, channel, false);
   }
 
-  public InvertibleSolenoid(int channel, boolean isInverted) {
-    solenoid = new Solenoid(channel);
+  public InvertibleSolenoid(int module, int channel, boolean isInverted) {
+    solenoid = new Solenoid(module, channel);
     this.isInverted = isInverted;
   }
 
