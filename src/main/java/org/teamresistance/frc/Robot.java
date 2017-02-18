@@ -1,30 +1,17 @@
 package org.teamresistance.frc;
 
-import edu.wpi.first.wpilibj.Sendable;
 import org.strongback.Strongback;
-import org.strongback.SwitchReactor;
 import org.strongback.components.AngleSensor;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.hardware.Hardware;
-import org.teamresistance.frc.command.grabber.AlignGear;
-import org.teamresistance.frc.command.grabber.FindGear;
-import org.teamresistance.frc.command.grabber.GearExtend;
-import org.teamresistance.frc.command.grabber.GearRetract;
-import org.teamresistance.frc.command.grabber.GrabGear;
-import org.teamresistance.frc.command.grabber.ReleaseGear;
-import org.teamresistance.frc.command.grabber.RotateDown;
-import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.hid.DaveKnob;
+import org.teamresistance.frc.subsystem.climb.Climber;
 import org.teamresistance.frc.subsystem.drive.Drive;
+import org.teamresistance.frc.subsystem.grabber.Grabber;
 import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.DriveTesting;
 import org.teamresistance.frc.util.testing.GrabberTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
-import org.teamresistance.frc.command.grabber.*;
-import org.teamresistance.frc.subsystem.climb.Climber;
-//import org.teamresistance.frc.subsystem.drive.Drive;
-import org.teamresistance.frc.subsystem.grabber.Grabber;
-import org.teamresistance.frc.subsystem.snorfler.Snorfler;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
@@ -51,7 +38,7 @@ public class Robot extends IterativeRobot {
   // Drive subsystem
   private final Drive drive = new Drive(
       new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
-      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), rightJoystick.getRoll());
+      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), knob);
 
   private final Grabber grabber = new Grabber(
       IO.gripSolenoid,
