@@ -21,20 +21,13 @@ public class MecanumDrive {
   private long prevTime;
 
   private double setpoint; // The target orientation for the robot
-
   private double tolerance = 0.1; // The percent tolerance for the error to be considered on target
-
   private double maxOutput = 1.0;
   private double minOutput = -1.0;
-
-  private double angle;
-
-  private boolean fieldOriented = true;
 
   private DriveType driveState = DriveType.KNOB_FIELD;
 
   private boolean rotationLatch = false;
-  private double rotationLatchDeadband = 30;
 
   public MecanumDrive(RobotDrive drive, NavX gyro) {
     this.drive = drive;
@@ -49,7 +42,6 @@ public class MecanumDrive {
     this.prevError = 0.0;
     this.integral = 0.0;
     this.prevTime = System.currentTimeMillis();
-//		gyro.init();
   }
 
   public void drive(double x, double y, double rotation, double angle) {
@@ -59,6 +51,7 @@ public class MecanumDrive {
     switch(driveState) {
       case KNOB_FIELD:
         double error = angle - gyro.getAngle();
+        double rotationLatchDeadband = 30;
         if(!rotationLatch && Math.abs(error) > rotationLatchDeadband) {
           error = 0;
         } else if(!rotationLatch && Math.abs(error) <= rotationLatchDeadband) {
@@ -94,84 +87,8 @@ public class MecanumDrive {
     return Math.abs(error) <= setpoint * tolerance;
   }
 
-  public void nextState() {
-    switch(driveState) {
-      case KNOB_FIELD:
-        driveState = DriveType.STICK_FIELD;
-        break;
-      case STICK_FIELD:
-        driveState = DriveType.KNOB_FIELD;
-        break;
-    }
-  }
-
-  public RobotDrive getDrive() {
-    return drive;
-  }
-
-  public void setDrive(RobotDrive drive) {
-    this.drive = drive;
-  }
-
-  public double getkP() {
-    return kP;
-  }
-
-  public void setkP(double kP) {
-    this.kP = kP;
-  }
-
-  public double getkI() {
-    return kI;
-  }
-
-  public void setkI(double kI) {
-    this.kI = kI;
-  }
-
-  public double getkD() {
-    return kD;
-  }
-
-  public void setkD(double kD) {
-    this.kD = kD;
-  }
-
-  public double getSetpoint() {
-    return setpoint;
-  }
-
-  public void setSetpoint(double setpoint) {
-    this.setpoint = setpoint;
-  }
-
-  public double getTolerance() {
-    return tolerance;
-  }
-
-  public void setTolerance(double tolerance) {
-    this.tolerance = tolerance;
-  }
-
-  public double getMaxOutput() {
-    return maxOutput;
-  }
-
-  public void setMaxOutput(double maxOutput) {
-    this.maxOutput = maxOutput;
-  }
-
-  public double getMinOutput() {
-    return minOutput;
-  }
-
-  public void setMinOutput(double minOutput) {
-    this.minOutput = minOutput;
-  }
-
   private enum DriveType {
     KNOB_FIELD,
     STICK_FIELD
   }
-
 }

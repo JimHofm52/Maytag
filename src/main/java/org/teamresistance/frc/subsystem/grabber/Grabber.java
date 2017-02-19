@@ -1,14 +1,22 @@
 package org.teamresistance.frc.subsystem.grabber;
 
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.strongback.command.Command;
 import org.strongback.command.CommandGroup;
 import org.strongback.command.Requirable;
-import org.strongback.components.Motor;
-import org.teamresistance.frc.*;
-import org.teamresistance.frc.command.grabber.*;
+import org.teamresistance.frc.InvertibleDigitalInput;
+import org.teamresistance.frc.SingleSolenoid;
+import org.teamresistance.frc.command.grabber.AlignGear;
+import org.teamresistance.frc.command.grabber.FindGear;
+import org.teamresistance.frc.command.grabber.GearExtend;
+import org.teamresistance.frc.command.grabber.GearRetract;
+import org.teamresistance.frc.command.grabber.GrabGear;
+import org.teamresistance.frc.command.grabber.InterruptGear;
+import org.teamresistance.frc.command.grabber.ReleaseGear;
+import org.teamresistance.frc.command.grabber.RotateDown;
+import org.teamresistance.frc.command.grabber.RotateUp;
+import org.teamresistance.frc.command.grabber.WaitCommand;
+
+import edu.wpi.first.wpilibj.SpeedController;
 
 /**
  * Created by shrey on 2/6/2017.
@@ -77,17 +85,7 @@ public class Grabber implements Requirable {
 
 
   private CommandGroup pickupGear() {
-//    SmartDashboard.putBoolean("Grabber Interrupted begin pickup? ", Grabber.interrrupted);
-//    if (Grabber.interrrupted) {
-
-    SmartDashboard.putBoolean("Button Status", Robot.test);
-
-    if (!Robot.test) {
-//      Grabber.interrrupted = false;
-      return reset();
-    } else {
-      return pickup();
-    }
+    return null;
   }
 
   public CommandGroup pickUpGearSequence() {
