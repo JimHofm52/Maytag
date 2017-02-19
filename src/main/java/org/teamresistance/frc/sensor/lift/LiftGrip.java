@@ -60,9 +60,9 @@ public class LiftGrip {
 
     //Step  HSL_Threshold0:
     Mat hslThresholdInput = cvResizeOutput;
-    double[] hslThresholdHue = { 0, 180.0 };
-    double[] hslThresholdSaturation = { 0, 180 };
-    double[] hslThresholdLuminance = { 238, 255.0 };
+    double[] hslThresholdHue = { 36, 74 };
+    double[] hslThresholdSaturation = { 101, 255 };
+    double[] hslThresholdLuminance = { 17, 87.0 };
     hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation,
         hslThresholdLuminance, hslThresholdOutput);
 
@@ -73,12 +73,12 @@ public class LiftGrip {
 
     //Step  Filter_Contours0:
     ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-    double filterContoursMinArea = 190.0;
+    double filterContoursMinArea = 0.0;
     double filterContoursMinPerimeter = 0.0;
     double filterContoursMinWidth = 0.0;
-    double filterContoursMaxWidth = 100000.0;
+    double filterContoursMaxWidth = 20.0;
     double filterContoursMinHeight = 0.0;
-    double filterContoursMaxHeight = 100000.0;
+    double filterContoursMaxHeight = 100.0;
     double[] filterContoursSolidity = { 0, 100.0 };
     double filterContoursMaxVertices = 1000000000.0;
     double filterContoursMinVertices = 0.0;
@@ -98,8 +98,6 @@ public class LiftGrip {
 
   /**
    * This method is a generated setter for source0.
-   *
-   * @param source the Mat to set
    */
   public void setsource0(Mat source0) {
     this.source0 = source0;
@@ -176,7 +174,6 @@ public class LiftGrip {
    * @param hue    The min and max hue
    * @param sat    The min and max saturation
    * @param lum    The min and max luminance
-   * @param output The image in which to store the output.
    */
   private void hslThreshold(Mat input, double[] hue, double[] sat, double[] lum,
                             Mat out) {
@@ -189,9 +186,6 @@ public class LiftGrip {
    * Sets the values of pixels in a binary image to their distance to the nearest black pixel.
    *
    * @param input    The image on which to perform the Distance Transform.
-   * @param type     The Transform.
-   * @param maskSize the size of the mask.
-   * @param output   The image in which to store the output.
    */
   private void findContours(Mat input, boolean externalOnly,
                             List<MatOfPoint> contours) {
@@ -219,7 +213,6 @@ public class LiftGrip {
    * @param maxWidth       maximum width
    * @param minHeight      minimum height
    * @param maxHeight      maximimum height
-   * @param Solidity       the minimum and maximum solidity of a contour
    * @param minVertexCount minimum vertex Count of the contours
    * @param maxVertexCount maximum vertex Count
    * @param minRatio       minimum ratio of width to height

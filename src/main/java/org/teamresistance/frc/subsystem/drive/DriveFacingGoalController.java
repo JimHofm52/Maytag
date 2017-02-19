@@ -17,10 +17,9 @@ import static org.strongback.control.SoftwarePIDController.SourceType;
  * class, you'll want to change either this class to use {@link Feedback#liftOffset} or supply the
  * lift output to {@link Feedback}.
  */
-@Deprecated
 public class DriveFacingGoalController implements Controller<Drive.Signal> {
   private static final double TOLERANCE = 0.02;
-  private static final double KP = 3; // maps the input domain to the output domain [-.8, +.8]
+  private static final double KP = 4; // maps the input domain to the output domain [-.8, +.8]
   private static final double KD = 0;
   private static final double KI = 0;
 

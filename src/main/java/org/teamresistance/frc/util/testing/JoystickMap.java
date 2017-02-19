@@ -16,6 +16,7 @@ class JoystickMap {
     static final int AUTO_TIMED_HOPPER = 7;
     static final int VISION_ALIGN = 11;
     static final int VISION_FACE = 10;
+    static final int DUMB_AUTO = 9;
   }
 
   static class RightJoystick {

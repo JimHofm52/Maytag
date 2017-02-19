@@ -5,6 +5,7 @@ import org.opencv.core.MatOfPoint;
 import java.util.ArrayList;
 import java.util.OptionalDouble;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.VisionRunner;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -28,6 +29,7 @@ public class LiftListener implements LiftSensor, VisionRunner.Listener<LiftPipel
   public OptionalDouble getRelativeOffset() {
     synchronized (visionLock) {
       // Ensure the pipeline has run
+      SmartDashboard.putBoolean("Pipeline run?", pipelineRan);
       if (!pipelineRan) return OptionalDouble.empty();
       return relativeOffset;
     }

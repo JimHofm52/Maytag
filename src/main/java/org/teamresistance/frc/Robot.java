@@ -45,8 +45,8 @@ import edu.wpi.first.wpilibj.vision.VisionThread;
 public class Robot extends IterativeRobot {
 
   public class CameraConfig {
-    public static final int WIDTH = 640;
-    public static final int HEIGHT = 480;
+    public static final int WIDTH = 320;
+    public static final int HEIGHT = 240;
   }
 
   public static final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
@@ -79,10 +79,11 @@ public class Robot extends IterativeRobot {
 
   // Vision
   private boolean visionThreadStarted = false;
-  private final AxisCamera axisCamera = CameraServer.getInstance().addAxisCamera("10.0.86.100");
+  private final AxisCamera axisCamera = CameraServer.getInstance().addAxisCamera("10.0.86.20");
   private final LiftPipeline pipeline = new LiftPipeline();
   private final LiftListener liftListener = new LiftListener();
   private final VisionThread visionThread = new VisionThread(axisCamera, pipeline, liftListener);
+
   private final Thread postVisionThread = new Thread(() -> {
     // FIXME: May have been causing problems earlier. Not really needed anyway, so it's "off" (see teleopInit)
     // This entire thread is only responsible for outputting post-processed images to the
@@ -148,9 +149,19 @@ public class Robot extends IterativeRobot {
     driveTesting.enableCancelling();
     driveTesting.enableNavXReset();
     driveTesting.enableVisionTest();
+    driveTesting.enableDumbAuto();
 
     // Gear commands
     grabberTesting.enableSequenceTest();
+
+    SmartDashboard.putNumber("DumbAuto Heading to Hopper", 60);
+    SmartDashboard.putNumber("DumbAuto Timeout to Hopper", 3);
+
+    SmartDashboard.putNumber("DumbAuto Heading into Hopper", 90);
+    SmartDashboard.putNumber("DumbAuto Timeout into Hopper", 0.2);
+
+    SmartDashboard.putNumber("DumbAuto Heading to Boiler", 180);
+    SmartDashboard.putNumber("DumbAuto Timeout to Boiler", 0.2);
   }
 
   @Override
@@ -162,7 +173,7 @@ public class Robot extends IterativeRobot {
   public void teleopInit() {
     Strongback.start();
     if (!visionThreadStarted) {
-      visionThread.start(); // Vision processing
+      //visionThread.start(); // Vision processing
       //postVisionThread.start(); // Streaming post-processed vision
       visionThreadStarted = true;
     }
@@ -177,13 +188,13 @@ public class Robot extends IterativeRobot {
 
     Feedback feedback = new Feedback(
         IO.navX.getAngle(), // angle
-        liftListener.getRelativeOffset(), // lift offset, between -1 and +1
-        OptionalDouble.empty() // nothing detects the boiler yet; effectively a "null" double
+        liftListener.getRelativeOffset(), // boiler offset, between -1 and +1
+        OptionalDouble.empty() // nothing detects the lift yet; effectively a "null" double
     );
 
     SmartDashboard.putNumber("Gyro", feedback.currentAngle);
-    SmartDashboard.putNumber("Boiler Offset", feedback.boilerOffset.orElse(-1));
-    SmartDashboard.putNumber("Lift Offset", feedback.liftOffset.orElse(-1));
+    SmartDashboard.putNumber("Feedback: Boiler Offset", feedback.boilerOffset.orElse(-1));
+    //SmartDashboard.putNumber("Feedback: Lift Offset", feedback.liftOffset.orElse(-1));
     drive.onUpdate(feedback);
 
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
