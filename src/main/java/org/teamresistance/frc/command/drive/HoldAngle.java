@@ -1,4 +1,4 @@
-package org.teamresistance.frc.command;
+package org.teamresistance.frc.command.drive;
 
 import org.strongback.command.Command;
 import org.strongback.command.Requirable;
@@ -13,9 +13,9 @@ import org.teamresistance.frc.subsystem.drive.DriveHoldingAngleController;
  *
  * @author Rothanak So
  */
-public class HoldAngleCommand extends DriveCommand {
+public class HoldAngle extends DriveCommand {
 
-  public HoldAngleCommand(Drive drive, double targetAngle) {
+  public HoldAngle(Drive drive, double targetAngle) {
     // Unlike a TurnToAngle command, we want HoldAngle to run indefinitely.
     super(drive, new DriveHoldingAngleController(targetAngle), true);
   }

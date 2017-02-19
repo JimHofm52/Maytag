@@ -1,7 +1,7 @@
-package org.teamresistance.frc;
+package org.teamresistance.frc.hardware.component;
 
 /**
- * Created by shrey on 2/6/2017.
+ * @author Shreya Ravi
  */
 public class InvertibleSolenoidWithPosition extends InvertibleSolenoid {
 

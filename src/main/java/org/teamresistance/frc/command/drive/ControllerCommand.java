@@ -1,4 +1,4 @@
-package org.teamresistance.frc.command;
+package org.teamresistance.frc.command.drive;
 
 import org.strongback.command.Command;
 import org.strongback.command.Requirable;
@@ -10,8 +10,8 @@ import org.teamresistance.frc.subsystem.Controller;
  * subsystem by managing the lifecycle of the controller.
  *
  * @author Rothanak So
- * @see HoldAngleCommand
- * @see DriveTimedCommand
+ * @see HoldAngle
+ * @see DriveTimed
  */
 // Human-readable version: class ControllerCommand<Subsystem, Controller, Signal> extends Command
 abstract class ControllerCommand<T extends ClosedLooping<V> & Requirable, U extends

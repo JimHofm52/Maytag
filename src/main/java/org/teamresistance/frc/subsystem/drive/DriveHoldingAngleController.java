@@ -2,6 +2,8 @@ package org.teamresistance.frc.subsystem.drive;
 
 import org.strongback.control.SoftwarePIDController.SourceType;
 import org.teamresistance.frc.Feedback;
+import org.teamresistance.frc.IO;
+import org.teamresistance.frc.Robot;
 import org.teamresistance.frc.subsystem.Controller;
 import org.teamresistance.frc.util.SynchronousPID;
 
@@ -20,14 +22,15 @@ public class DriveHoldingAngleController implements Controller<Drive.Signal> {
   // (>= 1.0 or <= -1.0) for the majority of travel. For example, a kP of 0.008 only outputs full
   // speed when the error exceeds 1 / 0.008, or 125 degrees.
   private static final double TOLERANCE = 2;
-  public static final double KP = 0.044;
-  public static final double KI = 0.0007;
-  public static final double KD = 0.088;
+  public static double KP = 0.044;
+  public static double KI = 0;
+  public static double KD = 0.088;
+
 
   private final SynchronousPID rotationPid;
 
   public DriveHoldingAngleController(double targetDegrees) {
-    this.rotationPid = new SynchronousPID("Angle Hold", SourceType.DISTANCE, KP, 0, KD)
+    this.rotationPid = new SynchronousPID("Angle Hold", SourceType.DISTANCE, KP, KI, KD)
         .withConfigurations(controller -> controller
             .withInputRange(0, 360) // navX
             .withOutputRange(-1.0, 1.0) // motor

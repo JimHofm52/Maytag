@@ -1,15 +1,14 @@
 package org.teamresistance.frc.command.grabber;
 
-import edu.wpi.first.wpilibj.SpeedController;
 import org.strongback.command.Command;
-import org.strongback.components.Motor;
-import org.teamresistance.frc.InvertibleDigitalInput;
+import org.teamresistance.frc.hardware.component.InvertibleDigitalInput;
+
+import edu.wpi.first.wpilibj.SpeedController;
 
 /**
- * Created by shrey on 2/7/2017.
+ * @author Shreya Ravi
  */
 public class AlignGear extends Command {
-
   private final SpeedController rotateGearMotor;
   private final InvertibleDigitalInput gearAlignBannerSensor;
 
@@ -32,5 +31,4 @@ public class AlignGear extends Command {
   public void end() {
     rotateGearMotor.set(0);
   }
-
 }

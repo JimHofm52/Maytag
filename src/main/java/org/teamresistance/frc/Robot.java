@@ -16,8 +16,10 @@ import org.teamresistance.frc.sensor.lift.LiftPipeline;
 import org.teamresistance.frc.subsystem.climb.Climber;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.subsystem.grabber.Grabber;
+import org.teamresistance.frc.hardware.hid.CodriverBox;
+import org.teamresistance.frc.subsystem.climb.Climber;
+import org.teamresistance.frc.subsystem.grabber.Grabber;
 import org.teamresistance.frc.util.testing.ClimberTesting;
-import org.teamresistance.frc.util.testing.DriveTesting;
 import org.teamresistance.frc.util.testing.GrabberTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
 
@@ -51,18 +53,18 @@ public class Robot extends IterativeRobot {
     public static final int HEIGHT = 480;
   }
 
-  private final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
-  private final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
-  private final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
+  public static final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
+  public static final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
+  public static final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
+  public static final CodriverBox codriverBox = new CodriverBox(3);
 
-  // Dave knob (runs on third joystick); does not rotate the bot, disabled for now
-  private final AngleSensor rawKnob = () -> coJoystick.getAxis(2).read() * -180 + 180;
-  private final DaveKnob knob = new DaveKnob(rawKnob, IO.navX);
-
-  // Drive subsystem
-  private final Drive drive = new Drive(
-      new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
-      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), rightJoystick.getRoll());
+  private final MecanumDrive drive = new MecanumDrive(
+      new RobotDrive(
+          IO.leftFrontMotor,
+          IO.leftRearMotor,
+          IO.rightFrontMotor,
+          IO.rightRearMotor),
+      IO.navX);
 
   private final Grabber grabber = new Grabber(
       IO.gripSolenoid,
@@ -128,31 +130,23 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     Strongback.configure().recordNoEvents().recordNoData();
-    DriveTesting driveTesting = new DriveTesting(drive, IO.navX, leftJoystick, rightJoystick, coJoystick);
     SnorflerTesting snorflerTesting = new SnorflerTesting(leftJoystick, rightJoystick, coJoystick);
     ClimberTesting climberTesting = new ClimberTesting(climber, leftJoystick, rightJoystick, coJoystick);
     GrabberTesting grabberTesting = new GrabberTesting(grabber, leftJoystick, rightJoystick, coJoystick);
 
     IO.cameraLights.set(Relay.Value.kForward); // Does not work, might be a hardware issue.
 
-    // All driving-related tests run on the left joystick
-    driveTesting.enableAngleHold();
-    driveTesting.enableAngleHoldTests();
-    driveTesting.enableCancelling();
-    driveTesting.enableNavXReset();
-
     // All subsystem tests are press-and-hold buttons on the right joystick
     snorflerTesting.enableSnorflerTest();
     snorflerTesting.enableFeedingShootingTest();
-    climberTesting.enableClimberTest();
     climberTesting.enableClimbRopeTest();
 
     // Vision
     driveTesting.enableVisionTest();
 
     // Gear commands
-    grabberTesting.enableIndividualCommandsTest();
-    grabberTesting.enableClimbRopeTest();
+    grabberTesting.enableSequenceTest();
+    drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
 
   @Override
@@ -171,7 +165,11 @@ public class Robot extends IterativeRobot {
     IO.compressor.setClosedLoopControl(true);
     SmartDashboard.putNumber("Agitator Power",0.35);
     SmartDashboard.putNumber("Shooter Power", 0.80);
+
+    drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
+
+  private boolean previousOrientationState = false;
 
   @Override
   public void teleopPeriodic() {
@@ -181,11 +179,17 @@ public class Robot extends IterativeRobot {
     axisCamera.setWhiteBalanceManual((int) SmartDashboard.getNumber("Axis: White Balance", 3000));
     axisCamera.setBrightness((int) SmartDashboard.getNumber("Axis: Brightness", 50));
 
-    SmartDashboard.putNumber("Knob: Angle", rawKnob.getAngle());
-    SmartDashboard.putNumber("Knob: Speed output", knob.read());
     SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
-    SmartDashboard.putData("PDP", IO.powerPanel);
 
+    boolean currentOrientationState = leftJoystick.getButton(8).isTriggered();
+    // this IF is the equivalent of running the code onTriggered
+    if(!previousOrientationState && currentOrientationState) {
+      drive.init(IO.navX.getAngle(), drive.getkP(), drive.getkI(), drive.getkD());
+      drive.nextState();
+    }
+    previousOrientationState = currentOrientationState;
+
+    // noop
     Feedback feedback = new Feedback(
         IO.navX.getAngle(), // angle
         OptionalDouble.empty(), // nothing detects the boiler yet; effectively a "null" double
@@ -195,13 +199,19 @@ public class Robot extends IterativeRobot {
     SmartDashboard.putNumber("Boiler Offset", feedback.boilerOffset.orElse(-1));
     SmartDashboard.putNumber("Lift Offset", feedback.liftOffset.orElse(-1));
 
-    drive.onUpdate(feedback);
+    codriverBox.update(1.0);
+    drive.drive(leftJoystick.getRoll().read(), leftJoystick.getPitch().read(), rightJoystick.getRoll().read(), codriverBox.getRotation());
+
+    SmartDashboard.putNumber("Gyro", IO.navX.getAngle());
+    SmartDashboard.putNumber("Dave Knob", codriverBox.getRotation());
 
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     SmartDashboard.putBoolean("Compressor Enabled?", IO.compressor.enabled());
     SmartDashboard.putBoolean("Is Retracted?", IO.gearRetractedLimit.get());
     SmartDashboard.putBoolean("Is Gear Present (Banner)", IO.gearFindBanner.get());
     SmartDashboard.putBoolean("Is Gear Aligned (Banner)", IO.gearAlignBanner.get());
+
+    SmartDashboard.putBoolean("Button 2 Pressed", coJoystick.getButton(2).isTriggered());
   }
 
   @Override

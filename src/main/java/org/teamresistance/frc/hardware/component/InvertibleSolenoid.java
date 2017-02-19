@@ -1,4 +1,4 @@
-package org.teamresistance.frc;
+package org.teamresistance.frc.hardware.component;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import org.strongback.command.Requirable;

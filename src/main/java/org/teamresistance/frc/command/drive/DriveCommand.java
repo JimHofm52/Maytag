@@ -1,4 +1,4 @@
-package org.teamresistance.frc.command;
+package org.teamresistance.frc.command.drive;
 
 import org.teamresistance.frc.subsystem.Controller;
 import org.teamresistance.frc.subsystem.drive.Drive;

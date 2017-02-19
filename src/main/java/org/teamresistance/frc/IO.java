@@ -1,9 +1,22 @@
 package org.teamresistance.frc;
 
-import edu.wpi.first.wpilibj.*;
+import org.teamresistance.frc.hardware.component.InvertibleDigitalInput;
+import org.teamresistance.frc.hardware.component.InvertibleSolenoid;
+import org.teamresistance.frc.hardware.component.InvertibleSolenoidWithPosition;
+import org.teamresistance.frc.hardware.component.SingleSolenoid;
+import org.teamresistance.frc.hardware.sensor.NavX;
+
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.VictorSP;
 
 /**
  * @author Rothanak So
+ * @author Shreya Ravi
  */
 public class IO {
 
@@ -102,11 +115,11 @@ public class IO {
       new InvertibleDigitalInput(DIO.GRABULATOR_RETRACTED_LIMIT, true);
 
   // Pneumatic Cylinders (controlled via Solenoids)
-  public static final InvertibleSolenoid gripSolenoid =
+  public static final SingleSolenoid gripSolenoid =
       new InvertibleSolenoid(CAN.PCM, PCM.GEAR_GRIP_SOLENOID, false);
-  public static final InvertibleSolenoidWithPosition extendSolenoid =
+  public static final SingleSolenoid extendSolenoid =
       new InvertibleSolenoidWithPosition(CAN.PCM, PCM.GEAR_EXTEND_SOLENOID, false, gearRetractedLimit);
-  public static final InvertibleSolenoid rotateSolenoid =
+  public static final SingleSolenoid rotateSolenoid =
       new InvertibleSolenoid(CAN.PCM, PCM.GEAR_ROTATE_SOLENOID, false);
 
   // Compressor and Relay
