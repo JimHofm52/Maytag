@@ -45,8 +45,9 @@ public class MecanumDrive {
   }
 
   public void drive(double x, double y, double rotation, double angle) {
-    long curTime = System.currentTimeMillis();
-    double deltaTime = (curTime - prevTime) / 1000.0;
+    //long curTime = System.currentTimeMillis();
+    //double deltaTime = (curTime - prevTime) / 1000.0;
+    final double deltaTime = 100; // microseconds
 
     switch(driveState) {
       case KNOB_FIELD:
@@ -74,10 +75,10 @@ public class MecanumDrive {
         if(result > maxOutput) result = maxOutput;
         else if(result < minOutput) result = minOutput;
 
-        drive.mecanumDrive_Cartesian(x, y, result, angle);
+        drive.mecanumDrive_Cartesian(x, y, result, gyro.getAngle());
         break;
       case STICK_FIELD:
-        drive.mecanumDrive_Cartesian(x, y, rotation, angle);
+        drive.mecanumDrive_Cartesian(x, y, rotation, gyro.getAngle());
         break;
     }
   }

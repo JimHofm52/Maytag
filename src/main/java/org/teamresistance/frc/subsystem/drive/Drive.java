@@ -1,6 +1,5 @@
 package org.teamresistance.frc.subsystem.drive;
 
-import edu.wpi.first.wpilibj.RobotDrive;
 import org.strongback.command.Command;
 import org.strongback.command.CommandGroup;
 import org.strongback.command.Requirable;
@@ -65,8 +64,6 @@ public class Drive extends ClosedLooping<Drive.Signal> implements Requirable {
       return; // abort so the drive signal doesn't mess things up
     }
 
-    SmartDashboard.putBoolean("Is Braking?", false);
-
     if (signal.robotOriented) {
       // Robot-oriented: convert the speeds from cartesian to polar
       double magnitude = Math.sqrt(signal.xSpeed * signal.xSpeed + signal.ySpeed * signal.ySpeed);
@@ -74,7 +71,6 @@ public class Drive extends ClosedLooping<Drive.Signal> implements Requirable {
       robotDrive.mecanumDrive_Polar(magnitude, direction, signal.rotateSpeed);
     } else {
       // Field-orient
-
       robotDrive.mecanumDrive_Cartesian(signal.xSpeed, signal.ySpeed, signal.rotateSpeed, gyro.getAngle());
     }
   }
