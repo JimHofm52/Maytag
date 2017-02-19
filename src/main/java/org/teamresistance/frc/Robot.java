@@ -71,6 +71,7 @@ public class Robot extends IterativeRobot {
     grabberTesting.enableSequenceTest();
 
     drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
+    IO.pingSensor.setAutomaticMode(true);
   }
 
   @Override
@@ -115,6 +116,8 @@ public class Robot extends IterativeRobot {
     SmartDashboard.putBoolean("Is Gear Aligned (Banner)", IO.gearAlignBanner.get());
 
     SmartDashboard.putBoolean("Button 2 Pressed", coJoystick.getButton(2).isTriggered());
+    SmartDashboard.putData("Ultrasonic Sensor", IO.pingSensor);
+    SmartDashboard.putNumber("Distance Away from Gear", IO.pingSensor.getRangeInches());
   }
 
   @Override

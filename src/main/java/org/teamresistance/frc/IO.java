@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 
@@ -121,6 +122,9 @@ public class IO {
       new InvertibleSolenoidWithPosition(CAN.PCM, PCM.GEAR_EXTEND_SOLENOID, false, gearRetractedLimit);
   public static final SingleSolenoid rotateSolenoid =
       new InvertibleSolenoid(CAN.PCM, PCM.GEAR_ROTATE_SOLENOID, false);
+
+  public static final Ultrasonic pingSensor = new Ultrasonic(3,4);
+
 
   // Compressor and Relay
   public static final Compressor compressor = new Compressor(CAN.PCM);
