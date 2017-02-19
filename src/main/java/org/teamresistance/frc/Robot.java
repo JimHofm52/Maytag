@@ -10,6 +10,8 @@ import org.teamresistance.frc.util.testing.ClimberTesting;
 import org.teamresistance.frc.util.testing.GrabberTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -30,14 +32,14 @@ public class Robot extends IterativeRobot {
   public static final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
   public static final CodriverBox codriverBox = new CodriverBox(3);
 
-  private final MecanumDrive drive = new MecanumDrive(
-      new RobotDrive(
+  private final UsbCamera usbCamera = CameraServer.getInstance().startAutomaticCapture();
+
+  private final MecanumDrive drive= new MecanumDrive(new RobotDrive(
           IO.leftFrontMotor,
           IO.leftRearMotor,
           IO.rightFrontMotor,
           IO.rightRearMotor),
       IO.navX);
-
   private final Grabber grabber = new Grabber(
       IO.gripSolenoid,
       IO.extendSolenoid,
@@ -55,6 +57,8 @@ public class Robot extends IterativeRobot {
     SnorflerTesting snorflerTesting = new SnorflerTesting(leftJoystick, rightJoystick, coJoystick);
     ClimberTesting climberTesting = new ClimberTesting(climber, leftJoystick, rightJoystick, coJoystick);
     GrabberTesting grabberTesting = new GrabberTesting(grabber, leftJoystick, rightJoystick, coJoystick);
+
+    usbCamera.setResolution(640, 480);
 
     IO.cameraLights.set(Relay.Value.kForward); // Does not work, might be a hardware issue.
 

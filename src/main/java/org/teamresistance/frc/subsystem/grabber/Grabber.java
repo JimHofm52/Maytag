@@ -3,7 +3,6 @@ package org.teamresistance.frc.subsystem.grabber;
 import org.strongback.command.Command;
 import org.strongback.command.CommandGroup;
 import org.strongback.command.Requirable;
-import org.teamresistance.frc.Robot;
 import org.teamresistance.frc.command.grabber.AlignGear;
 import org.teamresistance.frc.command.grabber.FindGear;
 import org.teamresistance.frc.command.grabber.GearExtend;
@@ -16,7 +15,6 @@ import org.teamresistance.frc.hardware.component.InvertibleDigitalInput;
 import org.teamresistance.frc.hardware.component.SingleSolenoid;
 
 import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * @author Shreya Ravi
@@ -70,7 +68,7 @@ public class Grabber implements Requirable {
         new GearExtend(0.5, extendSolenoid),
         new GrabGear(0.1, gripSolenoid),
         new GearRetract(extendSolenoid),
-        new RotateUp(1.0, extendSolenoid, rotateSolenoid),
+        new RotateUp(1.5, extendSolenoid, rotateSolenoid),
         new AlignGear(rotateGearMotor, gearAlignBannerSensor)
     );
   }
