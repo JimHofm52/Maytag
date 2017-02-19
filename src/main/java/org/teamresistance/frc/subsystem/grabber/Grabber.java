@@ -22,6 +22,8 @@ public class Grabber implements Requirable {
   private final InvertibleDigitalInput gearPresentBannerSensor;
   private final InvertibleDigitalInput gearAlignBannerSensor;
 
+  public static boolean interrupted = false;
+
 //  public static boolean interrrupted = false;
 
   public Grabber(SingleSolenoid gripSolenoid,
@@ -38,8 +40,6 @@ public class Grabber implements Requirable {
     this.gearAlignBannerSensor = gearAlignBannerSensor;
   }
 
-//  public static boolean interrupted = false;
-
   private CommandGroup lookForGear() {
     return CommandGroup.runSequentially(
         new GearRetract(extendSolenoid),
@@ -47,13 +47,13 @@ public class Grabber implements Requirable {
             new RotateDown(1.0, extendSolenoid, rotateSolenoid),
             new ReleaseGear(1.0, gripSolenoid)
         ),
-        new FindGear(gearPresentBannerSensor),
-        new WaitCommand(0.1)
+        new FindGear(gearPresentBannerSensor)
     );
   }
 
   public CommandGroup reset() {
     return CommandGroup.runSequentially(
+        Command.cancel(gearPresentBannerSensor, extendSolenoid, rotateSolenoid, gripSolenoid),
         new GearRetract(extendSolenoid),
         CommandGroup.runSimultaneously(
             new RotateUp(1.0, extendSolenoid, rotateSolenoid),
@@ -62,7 +62,7 @@ public class Grabber implements Requirable {
     );
   }
 
-  public CommandGroup pickup() {
+  public CommandGroup pickupGear() {
     return CommandGroup.runSequentially(
         new GearExtend(0.5, extendSolenoid),
         new GrabGear(0.1, gripSolenoid),
@@ -74,50 +74,11 @@ public class Grabber implements Requirable {
     );
   }
 
-
-
-  private CommandGroup pickupGear() {
-//    SmartDashboard.putBoolean("Grabber Interrupted begin pickup? ", Grabber.interrrupted);
-//    if (Grabber.interrrupted) {
-
-    SmartDashboard.putBoolean("Button Status", Robot.test);
-
-    if (!Robot.test) {
-//      Grabber.interrrupted = false;
-      return reset();
-    } else {
-      return pickup();
-    }
-  }
-
   public CommandGroup pickUpGearSequence() {
     return CommandGroup.runSequentially(
         lookForGear(),
         pickupGear()
     );
-  }
-
-
-
-
-//  public CommandGroup pickupGear() {
-//    return CommandGroup.runSequentially(
-//        new GearRetract(extendSolenoid),
-//        CommandGroup.runSimultaneously(
-//            new RotateDown(1.0, extendSolenoid, rotateSolenoid),
-//            new ReleaseGear(1.0, gripSolenoid)
-//        ),
-//        new FindGear(gearPresentBannerSensor),
-//        new GearExtend(0.5, extendSolenoid),
-//        new GrabGear(0.1, gripSolenoid),
-//        new GearRetract(extendSolenoid),
-//        new RotateUp(1.0, extendSolenoid, rotateSolenoid),
-//        new AlignGear(rotateGearMotor, gearAlignBannerSensor)
-//    );
-//  }
-
-  public Command interruptSequence() {
-    return new InterruptGear();
   }
 
 

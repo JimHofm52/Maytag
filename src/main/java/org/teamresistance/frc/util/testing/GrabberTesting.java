@@ -1,11 +1,14 @@
 package org.teamresistance.frc.util.testing;
 
+import org.strongback.Strongback;
 import org.strongback.command.CommandGroup;
 import org.strongback.components.ui.FlightStick;
 import org.teamresistance.frc.IO;
 import org.teamresistance.frc.command.grabber.*;
 import org.teamresistance.frc.subsystem.climb.Climber;
 import org.teamresistance.frc.subsystem.grabber.Grabber;
+
+import javax.xml.transform.sax.SAXSource;
 
 import static org.teamresistance.frc.util.testing.JoystickMap.RightJoystick.CLIMBER;
 
@@ -38,10 +41,12 @@ public class GrabberTesting extends CommandTesting {
   }
 
   public void enableSequenceTest() {
-//    reactor.onTriggeredSubmit(joystickC.getButton(2), () -> {Grabber.interrrupted = false;
-//                                                              return grabber.pickUpGearSequence();});
+
     reactor.onTriggeredSubmit(joystickC.getButton(2), () -> grabber.pickUpGearSequence());
-//    reactor.onUntriggeredSubmit(joystickC.getButton(2), () -> grabber.interruptSequence());
+    reactor.onUntriggered(joystickC.getButton(2), () -> Strongback.submit(grabber.reset()));
+
     reactor.onTriggeredSubmit(joystickC.getButton(3), () -> grabber.deliverGear());
+
   }
+
 }

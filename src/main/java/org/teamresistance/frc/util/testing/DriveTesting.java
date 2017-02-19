@@ -5,10 +5,9 @@ import org.strongback.command.Command;
 import org.strongback.command.CommandGroup;
 import org.strongback.components.ui.FlightStick;
 import org.teamresistance.frc.NavX;
-import org.teamresistance.frc.Robot;
-import org.teamresistance.frc.command.BrakeCommand;
-import org.teamresistance.frc.command.DriveTimedCommand;
-import org.teamresistance.frc.command.HoldAngleCommand;
+import org.teamresistance.frc.command.drive.BrakeCommand;
+import org.teamresistance.frc.command.drive.DriveTimedCommand;
+import org.teamresistance.frc.command.drive.HoldAngleCommand;
 import org.teamresistance.frc.subsystem.drive.Drive;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
