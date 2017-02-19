@@ -9,7 +9,6 @@ import org.teamresistance.frc.command.grabber.FindGear;
 import org.teamresistance.frc.command.grabber.GearExtend;
 import org.teamresistance.frc.command.grabber.GearRetract;
 import org.teamresistance.frc.command.grabber.GrabGear;
-import org.teamresistance.frc.command.grabber.InterruptGear;
 import org.teamresistance.frc.command.grabber.ReleaseGear;
 import org.teamresistance.frc.command.grabber.RotateDown;
 import org.teamresistance.frc.command.grabber.RotateUp;
@@ -71,10 +70,8 @@ public class Grabber implements Requirable {
         new GearExtend(0.5, extendSolenoid),
         new GrabGear(0.1, gripSolenoid),
         new GearRetract(extendSolenoid),
-        CommandGroup.runSimultaneously(
-            new RotateUp(1.0, extendSolenoid, rotateSolenoid),
-            new AlignGear(rotateGearMotor, gearAlignBannerSensor)
-        )
+        new RotateUp(1.0, extendSolenoid, rotateSolenoid),
+        new AlignGear(rotateGearMotor, gearAlignBannerSensor)
     );
   }
 

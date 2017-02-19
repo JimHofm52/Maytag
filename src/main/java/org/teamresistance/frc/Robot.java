@@ -64,7 +64,6 @@ public class Robot extends IterativeRobot {
     climberTesting.enableClimbRopeTest();
 
     // Gear commands
-    grabberTesting.enableIndividualCommandsTest();
     grabberTesting.enableSequenceTest();
 
     drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);

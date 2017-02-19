@@ -14,8 +14,6 @@ import org.teamresistance.frc.command.grabber.RotateDown;
 import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.subsystem.grabber.Grabber;
 
-import static org.teamresistance.frc.util.testing.JoystickMap.RightJoystick.CLIMBER;
-
 /**
  * @author Shreya Ravi
  */

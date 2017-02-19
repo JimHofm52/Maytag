@@ -21,10 +21,16 @@ class JoystickMap {
     static final int FEED_AND_SHOOT = 1;
     static final int AGITATE_WHILE_FEEDING = 3;
 
-    // Base
+  }
+
+  static class CoJoystick {
+
     static final int SNORFLE_IN = 11;
     static final int SNORFLE_OUT = 10;
+
+
     static final int CLIMBER = 8;
-    static final int CLIMBER_STOP = 9;
+
+
   }
 }

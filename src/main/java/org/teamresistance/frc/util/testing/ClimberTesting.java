@@ -5,8 +5,7 @@ import org.strongback.command.Command;
 import org.strongback.components.ui.FlightStick;
 import org.teamresistance.frc.subsystem.climb.Climber;
 
-import static org.teamresistance.frc.util.testing.JoystickMap.RightJoystick.CLIMBER;
-import static org.teamresistance.frc.util.testing.JoystickMap.RightJoystick.CLIMBER_STOP;
+import static org.teamresistance.frc.util.testing.JoystickMap.CoJoystick.CLIMBER;
 
 /**
  * @author Shreya Ravi
@@ -20,10 +19,7 @@ public class ClimberTesting extends CommandTesting {
   }
 
   public void enableClimbRopeTest() {
-    reactor.onTriggeredSubmit(joystickB.getButton(CLIMBER),
-        () -> climber.climbRope(70, 0.1));
-    reactor.onUntriggered(joystickB.getButton(CLIMBER),
-        () -> Strongback.submit(Command.cancel(climber)));
-    reactor.whileTriggered(joystickB.getButton(CLIMBER_STOP), climber::stop);
+    reactor.onTriggeredSubmit(joystickC.getButton(CLIMBER), () -> climber.climbRope(70, 0.1));
+    reactor.onUntriggered(joystickC.getButton(CLIMBER), () -> Strongback.submit(Command.cancel(climber)));
   }
 }

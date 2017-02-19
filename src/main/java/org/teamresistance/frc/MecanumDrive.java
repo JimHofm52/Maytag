@@ -65,7 +65,7 @@ public class MecanumDrive {
           error = 0;
         } else if (!rotationLatch && Math.abs(error) <= rotationLatchDeadband) {
           rotationLatch = true;
-          setpoint = gyro.getAngle();
+//          setpoint = gyro.getAngle();
         }
 
         if (Math.abs(error) >= 300) {
