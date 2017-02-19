@@ -24,14 +24,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author Ellis Levine
  */
 public class Robot extends IterativeRobot {
-  public static boolean test = false;
 
   public static final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
   public static final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
   public static final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
   public static final CodriverBox codriverBox = new CodriverBox(3);
 
-  private MecanumDrive drive;
+  private final MecanumDrive drive = new MecanumDrive(
+      new RobotDrive(
+          IO.leftFrontMotor,
+          IO.leftRearMotor,
+          IO.rightFrontMotor,
+          IO.rightRearMotor),
+      IO.navX);
 
   private final Grabber grabber = new Grabber(
       IO.gripSolenoid,
@@ -62,8 +67,6 @@ public class Robot extends IterativeRobot {
     grabberTesting.enableIndividualCommandsTest();
     grabberTesting.enableSequenceTest();
 
-    RobotDrive robotDrive = new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor);
-    drive = new MecanumDrive(robotDrive, IO.navX);
     drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
 
@@ -82,23 +85,25 @@ public class Robot extends IterativeRobot {
     drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
 
-  private boolean fieldOrientedState = false;
+  private boolean previousOrientationState = false;
 
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
 
-    Feedback feedback = new Feedback(IO.navX.getAngle());
-    SmartDashboard.putNumber("THIS Gyro!!!!!!!!", feedback.currentAngle);
-
     boolean currentOrientationState = leftJoystick.getButton(8).isTriggered();
-    if(!fieldOrientedState && currentOrientationState) {
+    // this IF is the equivalent of running the code onTriggered
+    if(!previousOrientationState && currentOrientationState) {
+      drive.init(IO.navX.getAngle(), drive.getkP(), drive.getkI(), drive.getkD());
       drive.nextState();
     }
-    fieldOrientedState = !currentOrientationState;
+    previousOrientationState = currentOrientationState;
 
     codriverBox.update(1.0);
     drive.drive(leftJoystick.getRoll().read(), leftJoystick.getPitch().read(), rightJoystick.getRoll().read(), codriverBox.getRotation());
+
+    SmartDashboard.putNumber("Gyro", IO.navX.getAngle());
+    SmartDashboard.putNumber("Dave Knob", codriverBox.getRotation());
 
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     SmartDashboard.putBoolean("Compressor Enabled?", IO.compressor.enabled());
@@ -107,9 +112,6 @@ public class Robot extends IterativeRobot {
     SmartDashboard.putBoolean("Is Gear Aligned (Banner)", IO.gearAlignBanner.get());
 
     SmartDashboard.putBoolean("Button 2 Pressed", coJoystick.getButton(2).isTriggered());
-    test = coJoystick.getButton(2).isTriggered();
-
-//    SmartDashboard.putBoolean("Grabber Interrupted", Grabber.interrrupted);
   }
 
   @Override

@@ -17,7 +17,6 @@ public class FindGear extends Command {
 
   @Override
   public boolean execute() {
-//    return (gearPresentBannerSensor.get() || Grabber.interrrupted);
-    return (gearPresentBannerSensor.get() || !Robot.test);
+    return gearPresentBannerSensor.get();
   }
 }
