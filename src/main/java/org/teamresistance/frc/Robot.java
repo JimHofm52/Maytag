@@ -7,28 +7,24 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.strongback.Strongback;
-import org.strongback.components.AngleSensor;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.hardware.Hardware;
-import org.teamresistance.frc.hid.DaveKnob;
 import org.teamresistance.frc.sensor.lift.LiftListener;
 import org.teamresistance.frc.sensor.lift.LiftPipeline;
 import org.teamresistance.frc.subsystem.climb.Climber;
 import org.teamresistance.frc.subsystem.drive.Drive;
 import org.teamresistance.frc.subsystem.grabber.Grabber;
-import org.teamresistance.frc.hardware.hid.CodriverBox;
-import org.teamresistance.frc.subsystem.climb.Climber;
-import org.teamresistance.frc.subsystem.grabber.Grabber;
 import org.teamresistance.frc.util.testing.ClimberTesting;
+import org.teamresistance.frc.util.testing.DriveTesting;
 import org.teamresistance.frc.util.testing.GrabberTesting;
 import org.teamresistance.frc.util.testing.SnorflerTesting;
 
 import java.util.ArrayList;
 import java.util.OptionalDouble;
 
+import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
-import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
@@ -56,15 +52,19 @@ public class Robot extends IterativeRobot {
   public static final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
   public static final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
   public static final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
-  public static final CodriverBox codriverBox = new CodriverBox(3);
+  //public static final CodriverBox codriverBox = new CodriverBox(3);
 
-  private final MecanumDrive drive = new MecanumDrive(
-      new RobotDrive(
-          IO.leftFrontMotor,
-          IO.leftRearMotor,
-          IO.rightFrontMotor,
-          IO.rightRearMotor),
-      IO.navX);
+  //private final MecanumDrive drive = new MecanumDrive(
+  //    new RobotDrive(
+  //        IO.leftFrontMotor,
+  //        IO.leftRearMotor,
+  //        IO.rightFrontMotor,
+  //        IO.rightRearMotor),
+  //    IO.navX);
+
+  private final Drive drive = new Drive(
+      new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
+      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), rightJoystick.getRoll());
 
   private final Grabber grabber = new Grabber(
       IO.gripSolenoid,
@@ -79,7 +79,7 @@ public class Robot extends IterativeRobot {
 
   // Vision
   private boolean visionThreadStarted = false;
-  private final UsbCamera axisCamera = CameraServer.getInstance().startAutomaticCapture();
+  private final AxisCamera axisCamera = CameraServer.getInstance().addAxisCamera("10.0.86.100");
   private final LiftPipeline pipeline = new LiftPipeline();
   private final LiftListener liftListener = new LiftListener();
   private final VisionThread visionThread = new VisionThread(axisCamera, pipeline, liftListener);
@@ -130,6 +130,7 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     Strongback.configure().recordNoEvents().recordNoData();
+    DriveTesting driveTesting = new DriveTesting(drive, IO.navX, leftJoystick, rightJoystick, coJoystick);
     SnorflerTesting snorflerTesting = new SnorflerTesting(leftJoystick, rightJoystick, coJoystick);
     ClimberTesting climberTesting = new ClimberTesting(climber, leftJoystick, rightJoystick, coJoystick);
     GrabberTesting grabberTesting = new GrabberTesting(grabber, leftJoystick, rightJoystick, coJoystick);
@@ -141,12 +142,15 @@ public class Robot extends IterativeRobot {
     snorflerTesting.enableFeedingShootingTest();
     climberTesting.enableClimbRopeTest();
 
-    // Vision
+    // Drive + vision
+    driveTesting.enableAngleHold();
+    driveTesting.enableAngleHoldTests();
+    driveTesting.enableCancelling();
+    driveTesting.enableNavXReset();
     driveTesting.enableVisionTest();
 
     // Gear commands
     grabberTesting.enableSequenceTest();
-    drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
 
   @Override
@@ -165,53 +169,28 @@ public class Robot extends IterativeRobot {
     IO.compressor.setClosedLoopControl(true);
     SmartDashboard.putNumber("Agitator Power",0.35);
     SmartDashboard.putNumber("Shooter Power", 0.80);
-
-    drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
-
-  private boolean previousOrientationState = false;
 
   @Override
   public void teleopPeriodic() {
-    // Change the camera settings. SmartDashboard-tunable, but watch the GRIP pipeline for breakages.
-    axisCamera.setResolution(CameraConfig.WIDTH, CameraConfig.HEIGHT);
-    axisCamera.setExposureManual((int) SmartDashboard.getNumber("Axis: Exposure", 50));
-    axisCamera.setWhiteBalanceManual((int) SmartDashboard.getNumber("Axis: White Balance", 3000));
-    axisCamera.setBrightness((int) SmartDashboard.getNumber("Axis: Brightness", 50));
-
     SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
 
-    boolean currentOrientationState = leftJoystick.getButton(8).isTriggered();
-    // this IF is the equivalent of running the code onTriggered
-    if(!previousOrientationState && currentOrientationState) {
-      drive.init(IO.navX.getAngle(), drive.getkP(), drive.getkI(), drive.getkD());
-      drive.nextState();
-    }
-    previousOrientationState = currentOrientationState;
-
-    // noop
     Feedback feedback = new Feedback(
         IO.navX.getAngle(), // angle
-        OptionalDouble.empty(), // nothing detects the boiler yet; effectively a "null" double
-        liftListener.getRelativeOffset() // lift offset, between -1 and +1
+        liftListener.getRelativeOffset(), // lift offset, between -1 and +1
+        OptionalDouble.empty() // nothing detects the boiler yet; effectively a "null" double
     );
+
     SmartDashboard.putNumber("Gyro", feedback.currentAngle);
     SmartDashboard.putNumber("Boiler Offset", feedback.boilerOffset.orElse(-1));
     SmartDashboard.putNumber("Lift Offset", feedback.liftOffset.orElse(-1));
-
-    codriverBox.update(1.0);
-    drive.drive(leftJoystick.getRoll().read(), leftJoystick.getPitch().read(), rightJoystick.getRoll().read(), codriverBox.getRotation());
-
-    SmartDashboard.putNumber("Gyro", IO.navX.getAngle());
-    SmartDashboard.putNumber("Dave Knob", codriverBox.getRotation());
+    drive.onUpdate(feedback);
 
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     SmartDashboard.putBoolean("Compressor Enabled?", IO.compressor.enabled());
     SmartDashboard.putBoolean("Is Retracted?", IO.gearRetractedLimit.get());
     SmartDashboard.putBoolean("Is Gear Present (Banner)", IO.gearFindBanner.get());
     SmartDashboard.putBoolean("Is Gear Aligned (Banner)", IO.gearAlignBanner.get());
-
-    SmartDashboard.putBoolean("Button 2 Pressed", coJoystick.getButton(2).isTriggered());
   }
 
   @Override

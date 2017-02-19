@@ -4,8 +4,9 @@ import org.strongback.Strongback;
 import org.strongback.command.Command;
 import org.strongback.command.CommandGroup;
 import org.strongback.components.ui.FlightStick;
+import org.teamresistance.frc.command.drive.AlignGoalCommand;
 import org.teamresistance.frc.command.drive.DriveTimed;
-import org.teamresistance.frc.command.AlignGoalCommand;
+import org.teamresistance.frc.command.drive.FaceGoalCommand;
 import org.teamresistance.frc.command.drive.HardBrake;
 import org.teamresistance.frc.command.drive.HoldAngle;
 import org.teamresistance.frc.hardware.sensor.NavX;
@@ -21,6 +22,7 @@ import static org.teamresistance.frc.util.testing.JoystickMap.LeftJoystick.AUTO_
 import static org.teamresistance.frc.util.testing.JoystickMap.LeftJoystick.CANCEL;
 import static org.teamresistance.frc.util.testing.JoystickMap.LeftJoystick.NAVX_RESET;
 import static org.teamresistance.frc.util.testing.JoystickMap.LeftJoystick.VISION_ALIGN;
+import static org.teamresistance.frc.util.testing.JoystickMap.LeftJoystick.VISION_FACE;
 import static org.teamresistance.frc.util.testing.JoystickMap.UNASSIGNED;
 
 /**
@@ -93,8 +95,7 @@ public class DriveTesting extends CommandTesting {
 
   public void enableVisionTest() {
     // FaceGoalController needs minor tweaking, see the JavaDoc for notes and reasoning
-    //reactor.onTriggeredSubmit(joystickA.getButton(VISION_FACE), () -> new FaceGoalCommand(drive));
-
+    reactor.onTriggeredSubmit(joystickA.getButton(VISION_FACE), () -> new FaceGoalCommand(drive));
     reactor.onTriggeredSubmit(joystickA.getButton(VISION_ALIGN), () -> new AlignGoalCommand(drive));
   }
 }
