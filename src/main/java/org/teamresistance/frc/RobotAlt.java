@@ -52,6 +52,8 @@ public class RobotAlt {
     private double maxOutput = 1.0;
     private double minOutput = -1.0;
 
+    double offset = 0;
+
     private boolean rotationLatch = false;
 
     public DaveKnob(ContinuousRange knobAngle, ContinuousRange gyroAngle) {
@@ -87,6 +89,33 @@ public class RobotAlt {
       if(result > maxOutput) result = maxOutput;
       else if(result < minOutput) result = minOutput;
       return result;
+    }
+
+    public double readRelative() { //returns power to turn to angle w/ DaKnob
+      double setAngle = knobAngle.read()  + offset;
+
+      if (setAngle > 359) { //if offset makes setAngle greater than 359, mod it
+        setAngle = setAngle % 360;
+      }
+
+      double normalize = (setAngle - gyroAngle.read()) % 360;  // normalizes
+
+      double power;
+
+      if(normalize < 180){
+        power =  normalize / 180;
+      }else{
+        power = (normalize - 360)/180;
+      }
+
+      return power;
+    }
+
+    public void zeroDaKnob() { //call after using joystick, pressing a turn to angle button, etc, to zero the new position of the DaKnob
+      offset += gyroAngle.read();
+      if (offset >= 360) {
+        offset = offset % 360;
+      }
     }
 
     // If the error is less than or equal to the tolerance it is on target
