@@ -1,11 +1,10 @@
-package org.teamresistance.frc;
+package org.teamresistance.frc.hardware.hid;
+
+import edu.wpi.first.wpilibj.Joystick;
 
 /**
- * Created by frank on 2/18/2017.
+ * @author Frank McCoy
  */
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public class CodriverBox {
 
   private Joystick input;

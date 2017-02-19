@@ -1,4 +1,4 @@
-package org.teamresistance.frc.command;
+package org.teamresistance.frc.command.snorfler;
 
 import org.strongback.command.Command;
 import org.teamresistance.frc.subsystem.snorfler.Snorfler;
@@ -6,10 +6,10 @@ import org.teamresistance.frc.subsystem.snorfler.Snorfler;
 /**
  * @author Tarik Brown .
  */
-public class SnorfleStopReversingCommand extends Command {
+public class StopSnorfling extends Command {
   private final Snorfler snorfler;
 
-  public SnorfleStopReversingCommand(Snorfler snorfler) {
+  public StopSnorfling(Snorfler snorfler) {
     this.snorfler = snorfler;
   }
 

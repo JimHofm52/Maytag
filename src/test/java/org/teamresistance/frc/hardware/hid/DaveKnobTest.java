@@ -1,4 +1,4 @@
-package org.teamresistance.frc.hid;
+package org.teamresistance.frc.hardware.hid;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package org.teamresistance.frc;
+package org.teamresistance.frc.hardware.sensor;
 
 import com.kauailabs.navx.frc.AHRS;
 

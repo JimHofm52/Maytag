@@ -1,16 +1,21 @@
 package org.teamresistance.frc.util.testing;
 
-import org.strongback.command.CommandGroup;
 import org.strongback.components.ui.FlightStick;
 import org.teamresistance.frc.IO;
-import org.teamresistance.frc.command.grabber.*;
-import org.teamresistance.frc.subsystem.climb.Climber;
+import org.teamresistance.frc.command.grabber.AlignGear;
+import org.teamresistance.frc.command.grabber.FindGear;
+import org.teamresistance.frc.command.grabber.GearExtend;
+import org.teamresistance.frc.command.grabber.GearRetract;
+import org.teamresistance.frc.command.grabber.GrabGear;
+import org.teamresistance.frc.command.grabber.ReleaseGear;
+import org.teamresistance.frc.command.grabber.RotateDown;
+import org.teamresistance.frc.command.grabber.RotateUp;
 import org.teamresistance.frc.subsystem.grabber.Grabber;
 
-import static org.teamresistance.frc.util.testing.JoystickMap.RightJoystick.CLIMBER;
-
+/**
+ * @author Shreya Ravi
+ */
 public class GrabberTesting extends CommandTesting {
-
   private final Grabber grabber;
 
   public GrabberTesting(Grabber grabber, FlightStick joystickA, FlightStick joystickB, FlightStick joystickC) {

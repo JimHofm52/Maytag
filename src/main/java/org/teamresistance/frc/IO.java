@@ -1,9 +1,22 @@
 package org.teamresistance.frc;
 
-import edu.wpi.first.wpilibj.*;
+import org.teamresistance.frc.hardware.component.InvertibleDigitalInput;
+import org.teamresistance.frc.hardware.component.InvertibleSolenoid;
+import org.teamresistance.frc.hardware.component.InvertibleSolenoidWithPosition;
+import org.teamresistance.frc.hardware.component.SingleSolenoid;
+import org.teamresistance.frc.hardware.sensor.NavX;
+
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.VictorSP;
 
 /**
  * @author Rothanak So
+ * @author Shreya Ravi
  */
 public class IO {
 

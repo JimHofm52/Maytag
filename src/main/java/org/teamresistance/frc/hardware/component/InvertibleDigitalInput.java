@@ -1,13 +1,13 @@
-package org.teamresistance.frc;
+package org.teamresistance.frc.hardware.component;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import org.strongback.command.Requirable;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 /**
- * Created by shrey on 2/8/2017.
+ * @author Shreya Ravi
  */
 public class InvertibleDigitalInput implements Requirable {
-
   private final DigitalInput limitSwitch;
   private final boolean isInverted;
 
@@ -17,10 +17,6 @@ public class InvertibleDigitalInput implements Requirable {
   }
 
   public boolean get() {
-    if (isInverted) {
-      return !limitSwitch.get();
-    }
-    return limitSwitch.get();
+    return isInverted ? !limitSwitch.get() : limitSwitch.get();
   }
-
 }

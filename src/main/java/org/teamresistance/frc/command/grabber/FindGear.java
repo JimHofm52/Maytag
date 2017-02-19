@@ -1,16 +1,13 @@
 package org.teamresistance.frc.command.grabber;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.strongback.command.Command;
-import org.teamresistance.frc.InvertibleDigitalInput;
 import org.teamresistance.frc.Robot;
-import org.teamresistance.frc.subsystem.grabber.Grabber;
+import org.teamresistance.frc.hardware.component.InvertibleDigitalInput;
 
 /**
- * Created by shrey on 2/7/2017.
+ * @author Shreya Ravi
  */
 public class FindGear extends Command {
-
   private final InvertibleDigitalInput gearPresentBannerSensor;
 
   public FindGear(InvertibleDigitalInput gearPresentBannerSensor) {
@@ -23,10 +20,4 @@ public class FindGear extends Command {
 //    return (gearPresentBannerSensor.get() || Grabber.interrrupted);
     return (gearPresentBannerSensor.get() || !Robot.test);
   }
-
-  @Override
-  public void end() {
-
-  }
-
 }

@@ -1,28 +1,34 @@
 package org.teamresistance.frc.subsystem.grabber;
 
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.strongback.command.Command;
 import org.strongback.command.CommandGroup;
 import org.strongback.command.Requirable;
-import org.strongback.components.Motor;
-import org.teamresistance.frc.*;
-import org.teamresistance.frc.command.grabber.*;
+import org.teamresistance.frc.Robot;
+import org.teamresistance.frc.command.grabber.AlignGear;
+import org.teamresistance.frc.command.grabber.FindGear;
+import org.teamresistance.frc.command.grabber.GearExtend;
+import org.teamresistance.frc.command.grabber.GearRetract;
+import org.teamresistance.frc.command.grabber.GrabGear;
+import org.teamresistance.frc.command.grabber.InterruptGear;
+import org.teamresistance.frc.command.grabber.ReleaseGear;
+import org.teamresistance.frc.command.grabber.RotateDown;
+import org.teamresistance.frc.command.grabber.RotateUp;
+import org.teamresistance.frc.hardware.component.InvertibleDigitalInput;
+import org.teamresistance.frc.hardware.component.SingleSolenoid;
+
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Created by shrey on 2/6/2017.
+ * @author Shreya Ravi
  */
 public class Grabber implements Requirable {
-
   private final SingleSolenoid gripSolenoid;
   private final SingleSolenoid extendSolenoid;
   private final SingleSolenoid rotateSolenoid;
   private final SpeedController rotateGearMotor;
   private final InvertibleDigitalInput gearPresentBannerSensor;
   private final InvertibleDigitalInput gearAlignBannerSensor;
-
-//  public static boolean interrrupted = false;
 
   public Grabber(SingleSolenoid gripSolenoid,
                  SingleSolenoid extendSolenoid,
@@ -48,7 +54,7 @@ public class Grabber implements Requirable {
             new ReleaseGear(1.0, gripSolenoid)
         ),
         new FindGear(gearPresentBannerSensor),
-        new WaitCommand(0.1)
+        Command.pause(0.1)
     );
   }
 
@@ -67,14 +73,12 @@ public class Grabber implements Requirable {
         new GearExtend(0.5, extendSolenoid),
         new GrabGear(0.1, gripSolenoid),
         new GearRetract(extendSolenoid),
-        CommandGroup.runSimultaneously (
+        CommandGroup.runSimultaneously(
             new RotateUp(1.0, extendSolenoid, rotateSolenoid),
             new AlignGear(rotateGearMotor, gearAlignBannerSensor)
         )
     );
   }
-
-
 
   private CommandGroup pickupGear() {
 //    SmartDashboard.putBoolean("Grabber Interrupted begin pickup? ", Grabber.interrrupted);
@@ -97,9 +101,6 @@ public class Grabber implements Requirable {
     );
   }
 
-
-
-
 //  public CommandGroup pickupGear() {
 //    return CommandGroup.runSequentially(
 //        new GearRetract(extendSolenoid),
@@ -120,12 +121,10 @@ public class Grabber implements Requirable {
     return new InterruptGear();
   }
 
-
   public CommandGroup deliverGear() {
     return CommandGroup.runSequentially(
         new AlignGear(rotateGearMotor, gearAlignBannerSensor),
         new ReleaseGear(1.0, gripSolenoid)
     );
   }
-
 }

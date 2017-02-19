@@ -1,12 +1,14 @@
 package org.teamresistance.frc.util;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.strongback.control.SoftwarePIDController;
 import org.strongback.control.SoftwarePIDController.SourceType;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.tables.ITable;
 
 /**
@@ -15,12 +17,12 @@ import edu.wpi.first.wpilibj.tables.ITable;
  */
 public class SynchronousPID implements LiveWindowSendable {
   private final SoftwarePIDController controller;
-  private final Relay<Double> inputRelay = new Relay<>();
-  private final Relay<Double> outputRelay = new Relay<>();
+  private final Bridge<Double> inputBridge = new Bridge<>();
+  private final Bridge<Double> outputBridge = new Bridge<>();
   private boolean isConfigured = false;
 
   public SynchronousPID(String name, SourceType type, double kP, double kI, double kD) {
-    this.controller = new SoftwarePIDController(type, inputRelay::get, outputRelay::accept)
+    this.controller = new SoftwarePIDController(type, inputBridge::get, outputBridge::accept)
         .withGains(
             SmartDashboard.getNumber(name + "/p", kP),
             SmartDashboard.getNumber(name + "/i", kI),
@@ -45,9 +47,9 @@ public class SynchronousPID implements LiveWindowSendable {
       throw new IllegalStateException("PID not configured. Did you remember to call " +
           "`withConfigurations`? Refer to the documentation for usage notes.");
 
-    inputRelay.accept(input);
+    inputBridge.accept(input);
     controller.computeOutput();
-    return outputRelay.get();
+    return outputBridge.get();
   }
 
   @Override
@@ -78,5 +80,30 @@ public class SynchronousPID implements LiveWindowSendable {
   @Override
   public String getSmartDashboardType() {
     return controller.getSmartDashboardType();
+  }
+
+  /**
+   * Serves as a bridge between a Consumer and a Supplier. Use it when you need to manually supply
+   * values to a {@link Supplier} or manually read the value from a {@link Consumer}.
+   * <p>
+   * Author's note: This is basically only used to turn those crazy asynchronous PIDs into synchronous
+   * PIDs, since they only take callbacks and don't actually have a method that returns the computed
+   * value. See: {@link SoftwarePIDController}, which then is coerced into {@link SynchronousPID}.
+   *
+   * @param <T> the type of value being consumed and supplied, e.g. Double
+   * @author Rothanak So
+   */
+  final class Bridge<T> implements Consumer<T>, Supplier<T> {
+    private T value;
+
+    @Override
+    public void accept(T value) {
+      this.value = value;
+    }
+
+    @Override
+    public T get() {
+      return value;
+    }
   }
 }

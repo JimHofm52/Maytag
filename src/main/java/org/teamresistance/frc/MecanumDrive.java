@@ -1,10 +1,12 @@
 package org.teamresistance.frc;
 
-/**
- * Created by Frank on 2/18/2017.
- */
+import org.teamresistance.frc.hardware.sensor.NavX;
+
 import edu.wpi.first.wpilibj.RobotDrive;
 
+/**
+ * @author Frank McCoy
+ */
 public class MecanumDrive {
   private RobotDrive drive;
   private NavX gyro;
@@ -56,30 +58,31 @@ public class MecanumDrive {
     long curTime = System.currentTimeMillis();
     double deltaTime = (curTime - prevTime) / 1000.0;
 
-    switch(driveState) {
+    switch (driveState) {
       case KNOB_FIELD:
         double error = angle - gyro.getAngle();
-        if(!rotationLatch && Math.abs(error) > rotationLatchDeadband) {
+        if (!rotationLatch && Math.abs(error) > rotationLatchDeadband) {
           error = 0;
-        } else if(!rotationLatch && Math.abs(error) <= rotationLatchDeadband) {
+        } else if (!rotationLatch && Math.abs(error) <= rotationLatchDeadband) {
           rotationLatch = true;
         }
 
-        if(Math.abs(error) >= 300) {
-          if(error > 0) {
+        if (Math.abs(error) >= 300) {
+          if (error > 0) {
             error -= 360;
           } else {
             error += 360;
           }
         }
-        if(onTarget(error)) error = 0.0;
+        if (onTarget(error)) error = 0.0;
         integral += error;
 
-        double result = (error * kP) + (integral * kI * deltaTime) + ((error - prevError) * kD / deltaTime);
+        double result = (error * kP) + (integral * kI * deltaTime) + ((error - prevError) * kD /
+            deltaTime);
         prevError = error;
 
-        if(result > maxOutput) result = maxOutput;
-        else if(result < minOutput) result = minOutput;
+        if (result > maxOutput) result = maxOutput;
+        else if (result < minOutput) result = minOutput;
 
         drive.mecanumDrive_Cartesian(x, y, result, angle);
         break;
@@ -95,7 +98,7 @@ public class MecanumDrive {
   }
 
   public void nextState() {
-    switch(driveState) {
+    switch (driveState) {
       case KNOB_FIELD:
         driveState = DriveType.STICK_FIELD;
         break;

@@ -1,17 +1,15 @@
 package org.teamresistance.frc.command.grabber;
 
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.strongback.command.Command;
-import org.teamresistance.frc.InvertibleSolenoid;
-import org.teamresistance.frc.InvertibleSolenoidWithPosition;
-import org.teamresistance.frc.SingleSolenoid;
+import org.teamresistance.frc.hardware.component.SingleSolenoid;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Created by shrey on 2/7/2017.
+ * @author Shreya Ravi
  */
 public class RotateUp extends Command {
-
   private final SingleSolenoid extendSolenoid;
   private final SingleSolenoid rotateSolenoid;
 
@@ -39,5 +37,4 @@ public class RotateUp extends Command {
   public void end() {
     SmartDashboard.putBoolean("Rotate Up Executed", true);
   }
-
 }

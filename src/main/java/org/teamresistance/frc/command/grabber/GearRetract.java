@@ -1,15 +1,14 @@
 package org.teamresistance.frc.command.grabber;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.strongback.command.Command;
-import org.teamresistance.frc.InvertibleSolenoidWithPosition;
-import org.teamresistance.frc.SingleSolenoid;
+import org.teamresistance.frc.hardware.component.SingleSolenoid;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Created by shrey on 2/6/2017.
+ * @author Shreya Ravi
  */
 public class GearRetract extends Command {
-
   private final SingleSolenoid extendSolenoid;
 
   public GearRetract(SingleSolenoid extendSolenoid) {
@@ -23,5 +22,4 @@ public class GearRetract extends Command {
     SmartDashboard.putBoolean("Gear Retracted", extendSolenoid.isRetracted());
     return extendSolenoid.isRetracted();
   }
-
 }

@@ -1,12 +1,12 @@
-package org.teamresistance.frc.command;
+package org.teamresistance.frc.command.drive;
 
 import org.strongback.command.Command;
 import org.teamresistance.frc.subsystem.drive.Drive;
 
-public class BrakeCommand extends Command {
+public class HardBrake extends Command {
   private final Drive drive;
 
-  public BrakeCommand(Drive drive, double timeoutSeconds) {
+  public HardBrake(Drive drive, double timeoutSeconds) {
     super(timeoutSeconds, drive);
     this.drive = drive;
   }

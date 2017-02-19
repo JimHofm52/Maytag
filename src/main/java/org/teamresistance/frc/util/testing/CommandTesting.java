@@ -4,6 +4,9 @@ import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.ui.FlightStick;
 
+/**
+ * @author Rothanak So
+ */
 class CommandTesting {
   static final SwitchReactor reactor = Strongback.switchReactor();
   final FlightStick joystickA;
