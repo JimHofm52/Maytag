@@ -17,6 +17,11 @@ public class NavX implements AngleSensor, Accelerometer {
     this.gyro = new AHRS(port);
   }
 
+  public void setAngle(double angle) {
+    gyro.reset();
+    gyro.setAngleAdjustment(angle);
+  }
+
   /**
    * Equivalent of getYaw()
    */

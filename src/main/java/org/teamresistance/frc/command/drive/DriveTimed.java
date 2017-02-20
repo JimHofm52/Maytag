@@ -8,4 +8,8 @@ public class DriveTimed extends DriveCommand {
   public DriveTimed(Drive drive, double orientation, double headingDeg, double timeoutSeconds) {
     super(drive, new DriveStrafingController(orientation, headingDeg), timeoutSeconds);
   }
+
+  public DriveTimed(Drive drive, double orientation, double headingDeg, double timeoutSeconds, double speed) {
+    super(drive, new DriveStrafingController(orientation, headingDeg, speed), timeoutSeconds);
+  }
 }
