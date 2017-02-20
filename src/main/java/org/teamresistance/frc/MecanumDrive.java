@@ -51,7 +51,6 @@ public class MecanumDrive {
     this.prevError = 0.0;
     this.integral = 0.0;
     this.prevTime = System.currentTimeMillis();
-//		gyro.init();
   }
 
   public void drive(double x, double y, double rotation, double angle) {
@@ -65,7 +64,6 @@ public class MecanumDrive {
           error = 0;
         } else if (!rotationLatch && Math.abs(error) <= rotationLatchDeadband) {
           rotationLatch = true;
-//          setpoint = gyro.getAngle();
         }
 
         if (Math.abs(error) >= 300) {
@@ -85,10 +83,10 @@ public class MecanumDrive {
         if (result > maxOutput) result = maxOutput;
         else if (result < minOutput) result = minOutput;
 
-        drive.mecanumDrive_Cartesian(x, y, result, gyro.getAngle());
+        drive.mecanumDrive_Cartesian(x, y, result, gyro.getAngle()); // used to be knob angle
         break;
       case STICK_FIELD:
-        drive.mecanumDrive_Cartesian(x, y, rotation, gyro.getAngle());
+        drive.mecanumDrive_Cartesian(x, y, rotation, gyro.getAngle()); // used to be knob angle
         break;
     }
   }

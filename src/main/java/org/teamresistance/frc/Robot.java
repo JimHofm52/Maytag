@@ -3,6 +3,7 @@ package org.teamresistance.frc;
 import org.strongback.Strongback;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.hardware.Hardware;
+import org.teamresistance.frc.hardware.hid.CodriverBox;
 import org.teamresistance.frc.sensor.lift.LiftListener;
 import org.teamresistance.frc.sensor.lift.LiftPipeline;
 import org.teamresistance.frc.sensor.lift.StreamProcessedVideo;
@@ -48,14 +49,14 @@ public class Robot extends IterativeRobot {
   public static final FlightStick leftJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
   public static final FlightStick rightJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
   public static final FlightStick coJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(2);
-  //public static final CodriverBox codriverBox = new CodriverBox(3);
+  public static final CodriverBox codriverBox = new CodriverBox(3);
 
-  //private final MecanumDrive drive = new MecanumDrive(
-  //    new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor), IO.navX);
+  private final MecanumDrive mecanumDrive = new MecanumDrive(
+      new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor), IO.navX);
 
   private final Drive drive = new Drive(
-      new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
-      IO.navX, leftJoystick.getRoll(), leftJoystick.getPitch(), rightJoystick.getRoll());
+      mecanumDrive, codriverBox::getRotation, leftJoystick.getRoll(), leftJoystick.getPitch(),
+      rightJoystick.getRoll());
 
   private final Grabber grabber = new Grabber(
       IO.gripSolenoid, IO.extendSolenoid, IO.rotateSolenoid, IO.gearRotatorMotor,
@@ -82,10 +83,6 @@ public class Robot extends IterativeRobot {
     ClimberTesting climberTesting = new ClimberTesting(climber, leftJoystick, rightJoystick, coJoystick);
     GrabberTesting grabberTesting = new GrabberTesting(grabber, leftJoystick, rightJoystick, coJoystick);
 
-    usbCamera.setResolution(640, 480);
-
-    IO.cameraLights.set(Relay.Value.kForward); // Does not work, might be a hardware issue.
-
     // All subsystem tests are press-and-hold buttons on the right joystick
     snorflerTesting.enableSnorflerTest();
     snorflerTesting.enableFeedingShootingTest();
@@ -102,6 +99,7 @@ public class Robot extends IterativeRobot {
     // Gear commands
     grabberTesting.enableSequenceTest();
 
+    // Auto debug
     SmartDashboard.putNumber("DumbAuto Heading to Hopper", 60);
     SmartDashboard.putNumber("DumbAuto Timeout to Hopper", 3);
 
@@ -110,7 +108,12 @@ public class Robot extends IterativeRobot {
 
     SmartDashboard.putNumber("DumbAuto Heading to Boiler", 180);
     SmartDashboard.putNumber("DumbAuto Timeout to Boiler", 0.2);
+
+    // Actual configurations
+    usbCamera.setResolution(640, 480);
     IO.pingSensor.setAutomaticMode(true);
+    IO.cameraLights.set(Relay.Value.kForward); // Does not work, might be a hardware issue.
+    mecanumDrive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
 
   @Override
@@ -129,32 +132,42 @@ public class Robot extends IterativeRobot {
     IO.compressor.setClosedLoopControl(true);
     SmartDashboard.putNumber("Agitator Power",0.35);
     SmartDashboard.putNumber("Shooter Power", 0.80);
+    mecanumDrive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
   }
+
+  private boolean previousOrientationState = false;
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
+    IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
+
+    boolean currentOrientationState = leftJoystick.getButton(8).isTriggered();
+    if(!previousOrientationState && currentOrientationState) {
+      // There was a drive.init() here too but it didn't exist in the working Saturday commit -- was it added as a fix?
+      mecanumDrive.nextState();
+    }
+    previousOrientationState = currentOrientationState;
 
     Feedback feedback = new Feedback(
         IO.navX.getAngle(), // angle
         liftListener.getRelativeOffset(), // boiler offset, between -1 and +1
         OptionalDouble.empty() // nothing detects the lift yet; effectively a "null" double
     );
+    codriverBox.update(1.0);
+    drive.onUpdate(feedback);
 
     SmartDashboard.putNumber("Gyro", feedback.currentAngle);
     SmartDashboard.putNumber("Feedback: Boiler Offset", feedback.boilerOffset.orElse(-1));
-    //SmartDashboard.putNumber("Feedback: Lift Offset", feedback.liftOffset.orElse(-1));
-    drive.onUpdate(feedback);
 
-    IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     SmartDashboard.putBoolean("Compressor Enabled?", IO.compressor.enabled());
     SmartDashboard.putBoolean("Is Retracted?", IO.gearRetractedLimit.get());
     SmartDashboard.putBoolean("Is Gear Present (Banner)", IO.gearFindBanner.get());
     SmartDashboard.putBoolean("Is Gear Aligned (Banner)", IO.gearAlignBanner.get());
 
+    SmartDashboard.putNumber("Climber Current", IO.powerPanel.getCurrent(IO.PDP.CLIMBER));
     SmartDashboard.putBoolean("Button 2 Pressed", coJoystick.getButton(2).isTriggered());
-    SmartDashboard.putData("Ultrasonic Sensor", IO.pingSensor);
     SmartDashboard.putNumber("Distance Away from Gear", IO.pingSensor.getRangeInches());
+    SmartDashboard.putData("Ultrasonic Sensor", IO.pingSensor);
   }
 
   @Override

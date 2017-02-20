@@ -1,6 +1,5 @@
 package org.teamresistance.frc.subsystem.drive;
 
-import edu.wpi.first.wpilibj.RobotDrive;
 import org.strongback.command.Command;
 import org.strongback.command.CommandGroup;
 import org.strongback.command.Requirable;
@@ -8,11 +7,11 @@ import org.strongback.components.AngleSensor;
 import org.strongback.components.ui.ContinuousRange;
 import org.teamresistance.frc.Feedback;
 import org.teamresistance.frc.IO;
+import org.teamresistance.frc.MecanumDrive;
 import org.teamresistance.frc.subsystem.ClosedLooping;
 import org.teamresistance.frc.subsystem.Controller;
 import org.teamresistance.frc.subsystem.OpenLoopController;
 
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -40,16 +39,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author Rothanak So
  */
 public class Drive extends ClosedLooping<Drive.Signal> implements Requirable {
-  private final RobotDrive robotDrive;
-  private final AngleSensor gyro;
+  private MecanumDrive mecanumDrive;
+  private AngleSensor knob;
 
   private boolean hackBrakingLatch;
 
-  public Drive(RobotDrive robotDrive, AngleSensor gyro, ContinuousRange xSpeed, ContinuousRange ySpeed,
+  public Drive(MecanumDrive mecanumDrive, AngleSensor knob, ContinuousRange xSpeed, ContinuousRange ySpeed,
                ContinuousRange rotateSpeed) {
     super(() -> Signal.createFieldOriented(xSpeed.read(), ySpeed.read(), rotateSpeed.read()));
-    this.robotDrive = robotDrive;
-    this.gyro = gyro;
+    this.mecanumDrive = mecanumDrive;
+    this.knob = knob;
   }
 
   @Override
@@ -68,14 +67,11 @@ public class Drive extends ClosedLooping<Drive.Signal> implements Requirable {
     SmartDashboard.putBoolean("Is Braking?", false);
 
     if (signal.robotOriented) {
-      // Robot-oriented: convert the speeds from cartesian to polar
-      double magnitude = Math.sqrt(signal.xSpeed * signal.xSpeed + signal.ySpeed * signal.ySpeed);
-      double direction = Math.toDegrees(Math.atan2(signal.ySpeed, signal.xSpeed));
-      robotDrive.mecanumDrive_Polar(magnitude, direction, signal.rotateSpeed);
+      // Robot-oriented (pretend the gyro angle is 0)
+      mecanumDrive.drive(signal.xSpeed, signal.ySpeed, signal.rotateSpeed, 0);
     } else {
-      // Field-orient
-
-      robotDrive.mecanumDrive_Cartesian(signal.xSpeed, signal.ySpeed, signal.rotateSpeed, gyro.getAngle());
+      // Field-oriented
+      mecanumDrive.drive(signal.xSpeed, signal.ySpeed, signal.rotateSpeed, knob.getAngle());
     }
   }
 
